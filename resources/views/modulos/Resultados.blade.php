@@ -104,7 +104,7 @@
     <label class="section-title">Estacionalidad de Ventas</label>
     <p>En esta gráfica se puede apreciar el incremento y decremento en ventas que ha tenido el negocio en un período de operaciones de 1 año.</p>
 
-    <div id="GraficaEstacionVentas" class="ht-200 ht-sm-300 bd"></div>
+    <div id="GraficaEstacionVentas" class="ht-200 ht-sm-300"></div>
 
 </div><!-- wrapper -->
 
@@ -284,7 +284,7 @@
     
     <br>
     
-    <div id="GraficaFinanciamientoProyecto" class="ht-200 ht-sm-300 bd"></div>
+    <div id="GraficaFinanciamientoProyecto" class="ht-200 ht-sm-300"></div>
 
     <br>
 
@@ -312,7 +312,113 @@
 
     <br>
 
-    <div id="GraficaDestinoInversiones" class="ht-200 ht-sm-300 bd"></div>
+    <div id="GraficaDestinoInversiones" class="ht-200 ht-sm-300"></div>
+
+</div><!-- wrapper -->
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Estado de Origen y Aplicación</label>
+    <br>
+
+    <p>Con la finalidad de evaluar los flujos de efectivo que el proyecto generaría en los primeros doce meses de operación, se elaboró un estado de origen y aplicación de efectivo de los 12 primeros meses. Para el análisis de las cifras de los años subsecuentes se tiene el cálculo del flujo de efectivo neto actual.</p>
+
+    <h6>Entradas de Efectivo</h6>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Operación</th>
+                <th>Financiamiento</th>
+                <th>Otras</th>
+                <th>Total de Fuentes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaEntradasEfectivo as $dato)
+                <tr>
+                    <td>{{ $dato->mes_entradas_efectivo }}</td>
+                    <td>{{ $dato->ventas_cobranza_entradas_efectivo }}</td>
+                    <td>{{ $dato->acreedores_diversos_entradas_efectivo }}</td>
+                    <td>{{ $dato->otros_entradas_efectivo }}</td>
+                    <td>{{ $dato->total_entradas_efectivo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <br>
+
+    <h6>Salidas de Efectivo</h6>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Inversión en Activos Fijos</th>
+                <th>Inversión en Activos Diferidos</th>
+                <th>Inversión en Capital de Trabajo</th>
+                <th>Costos Variables de Operación</th>
+                <th>Costos Fijos de Operación</th>
+                <th>Gastos Financieros</th>
+                <th>ISR + PTU</th>
+                <th>Pagos de Capital por Financiamiento</th>
+                <th>Total Salidas</th>
+                <th>Flujo Neto de Efectivo</th>
+                <th>Flujo de Efectivo Acumulado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaSalidasEfectivo as $dato)
+                <tr>
+                    <td>{{ $dato->mes_salidas_efectivo }}</td>
+                    <td>{{ $dato->inversion_fijos }}</td>
+                    <td>{{ $dato->inversion_diferidos }}</td>
+                    <td>{{ $dato->inversion_capital }}</td>
+                    <td>{{ $dato->costos_variables_salidas_efectivo }}</td>
+                    <td>{{ $dato->costos_fijos_salidas_efectivo }}</td>
+                    <td>{{ $dato->gastos_financieros_salidas_efectivo }}</td>
+                    <td>{{ $dato->isr_ptu_salidas_efectivo }}</td>
+                    <td>{{ $dato->pagos_capital_salidas_efectivo }}</td>
+                    <td>{{ $dato->total_salidas_efectivo }}</td>
+                    <td>{{ $dato->flujo_neto_salidas_efectivo }}</td>
+                    <td>{{ $dato->flujo_efectivo_salidas_efectivo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</div><!-- wrapper -->
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Pronósticos de Gastos y Costos</label>
+
+    <h6>Composición de Costo Fijo</h6>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>Costo Mensual</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaCompCostoFijo as $dato)
+                <tr>
+                    <td>{{ $dato->concepto_CFM }}</td>
+                    <td>{{ $dato->CFM }}</td>
+                </tr>
+            @endforeach
+            @if( isset($tablaCompCostoFijoTotal[0]) )
+                <tr class="tx-bold bg-gray-100">
+                    <td>Total</td>
+                    <td>{{ $tablaCompCostoFijoTotal[0]->costo_fijo }}</td>
+                </tr>
+            @endif
+        </tbody>
+    </table>
+
+    <div id="GraficaCompCostoFijo" class="ht-200 ht-sm-300"></div>
 
 </div><!-- wrapper -->
 
@@ -324,38 +430,6 @@
 $(function(){
 
     /**************** PRODUCTOS O SERVICIOS - GRÁFICA PASTEL ************/
-    var ProdSerData = [{
-        name: 'Productos o Servicios',
-        type: 'pie',
-        radius: '75%',
-        center: ['50%', '57.5%'],
-        data: [
-            @foreach($tablaMezclaProSer as $dato)
-                {
-                    value: {{$dato->us_producto_servicio_mezcla_productos_servicios_1_anio}}, 
-                    name: '{{$dato->nombre_producto_servicio_mezcla_productos_servicios_1_anio}}'
-                },
-            @endforeach
-        ],
-        label: {
-            normal: {
-                fontFamily: 'Roboto, sans-serif',
-                fontSize: 11
-            }
-        },
-        labelLine: {
-            normal: {
-                show: true
-            }
-        },
-        markLine: {
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            }
-        }
-    }];
 
     var ProdSerOption = {
         tooltip: {
@@ -367,19 +441,28 @@ $(function(){
             }
         },
         legend: {
-            type: 'scroll',
             orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
+            x: 'right',
             data: [
                 @foreach($tablaMezclaProSer as $dato)
-                    {{$dato->us_producto_servicio_mezcla_productos_servicios_1_anio}},
+                    '{{$dato->nombre_producto_servicio_mezcla_productos_servicios_1_anio}}',
                 @endforeach
-            ],
-            selected: data.selected
+            ]
         },
-        series: ProdSerData
+        series: [{
+            name: 'Productos o Servicios',
+            type: 'pie',
+            radius: '75%',
+            center: ['50%', '50%'],
+            data: [
+                @foreach($tablaMezclaProSer as $dato)
+                    {
+                        value: {{$dato->us_producto_servicio_mezcla_productos_servicios_1_anio}}, 
+                        name: '{{$dato->nombre_producto_servicio_mezcla_productos_servicios_1_anio}}'
+                    },
+                @endforeach
+            ]
+        }]
     };
 
     var ProductosServicios = document.getElementById('ProductoServicios');
@@ -497,6 +580,15 @@ $(function(){
                 fontFamily: 'Roboto, sans-serif'
             }
         },
+        legend: {
+            orient: 'vertical',
+            x: 'right',
+            data: [
+                @foreach($tablaFinanProject as $dato)
+                    '{{$dato->fuente_financiamiento_proyecto}}',
+                @endforeach
+            ]
+        },
         series: FinanProjectData
     };
 
@@ -547,12 +639,80 @@ $(function(){
                 fontFamily: 'Roboto, sans-serif'
             }
         },
+        legend: {
+            orient: 'vertical',
+            x: 'right',
+            data: [
+                @foreach($tablaDestInver as $dato)
+                    '{{$dato->destinos_inversiones_destino_recursos}}',
+                @endforeach
+            ]
+        },
         series: DestinoRecursosData
     };
 
     var DestinoRecursos = document.getElementById('GraficaDestinoInversiones');
     var DestinoRecursosChart = echarts.init(DestinoRecursos);
     DestinoRecursosChart.setOption(DestinoRecursosOption);
+
+    /**************** COMPOSICIÓN DE COSTOS FIJOS - GRÁFICA PASTEL ************/
+    var CompCostoFijoData = [{
+        name: 'Monto',
+        type: 'pie',
+        radius: '75%',
+        center: ['50%', '57.5%'],
+        data: [
+            @foreach($tablaCompCostoFijo as $dato)
+                {
+                    value: {{$dato->CFM}}, 
+                    name: '{{$dato->concepto_CFM}}'
+                },
+            @endforeach
+        ],
+        label: {
+            normal: {
+                fontFamily: 'Roboto, sans-serif',
+                fontSize: 11
+            }
+        },
+        labelLine: {
+            normal: {
+                show: true
+            }
+        },
+        markLine: {
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            }
+        }
+    }];
+
+    var CompCostoFijoOption = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)',
+            textStyle: {
+                fontSize: 11,
+                fontFamily: 'Roboto, sans-serif'
+            }
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'right',
+            data: [
+                @foreach($tablaCompCostoFijo as $dato)
+                    '{{$dato->concepto_CFM}}',
+                @endforeach
+            ]
+        },
+        series: CompCostoFijoData
+    };
+
+    var CompCostoFijo = document.getElementById('GraficaCompCostoFijo');
+    var CompCostoFijoChart = echarts.init(CompCostoFijo);
+    CompCostoFijoChart.setOption(CompCostoFijoOption);
 
 });
 

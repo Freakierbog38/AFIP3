@@ -49,6 +49,22 @@ class ResultadosController extends Controller
         ////////////////////////////////////////////////////////////////////////////////////////////////
         $tablaDestInver = DB::select('CALL VIII_pro_select_destino_inversiones_id(?)', array( \Auth::user()->id_usuario ) );
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////// Entradas de Efectivo ///////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        $tablaEntradasEfectivo = DB::select('CALL AFIP_pro_select_entradas_efectivo_id(?)', array( \Auth::user()->id_usuario ) );
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////// Salidas de Efectivo ///////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        $tablaSalidasEfectivo = DB::select('CALL AFIP_pro_select_entradas_efectivo_id(?)', array( \Auth::user()->id_usuario ) );
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// Composición Costo Fijo ///////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        $tablaCompCostoFijo = DB::select('CALL III_pro_select_cfms_id(?)', array( \Auth::user()->id_usuario ) );
+        $tablaCompCostoFijoTotal = DB::select('CALL III_pro_CFM(?)', array( \Auth::user()->id_usuario ) );
+
         return view('modulos.Resultados', 
             [
                 'title'                     => 'Reporte AFIP',
@@ -61,6 +77,12 @@ class ResultadosController extends Controller
                 'tablaResultHist'           => $tablaResultHist,
                 'tablaFinanProject'         => $tablaFinanProject,
                 'tablaDestInver'            => $tablaDestInver,
-            ]);
+                'tablaEntradasEfectivo'     => $tablaEntradasEfectivo,
+                'tablaSalidasEfectivo'      => $tablaSalidasEfectivo,
+                'tablaCompCostoFijo'        => $tablaCompCostoFijo,
+                'tablaCompCostoFijoTotal'   => $tablaCompCostoFijoTotal,
+            ]
+        );
     }
+
 }

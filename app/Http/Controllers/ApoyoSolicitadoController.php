@@ -74,8 +74,8 @@ class ApoyoSolicitadoController extends Controller
     // Agrega los registros de Pasivos Actuales
     public function addPasivosActuales(Request $request)
     {
-        if($request->tipo_fin != "Fijo" && $request->tipo_fin != "Variable")
-            $request->tipo_fin = NULL;
+        if($request->tipo_tas != "Fijo" && $request->tipo_tas != "Variable")
+            $request->tipo_tas = NULL;
 
         // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
