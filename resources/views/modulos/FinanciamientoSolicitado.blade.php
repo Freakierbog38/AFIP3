@@ -436,14 +436,13 @@
 
                                     <div class="form-group">
                                         <label class="tx-bold">Destino de Inversión:</label>
-                                        <input type="text" id="fuente_fin" name="fuente_fin" class="form-control pd-y-12"  placeholder="Ingrese la fuente de financiamiento aquí" required>
+                                        <input type="text" id="fuente_fin" name="fuente_fin" class="form-control pd-y-12"  placeholder="Ingrese el destino de inversión aquí" required>
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
                                         <label class="tx-bold">Tipo:</label>
                                         <select class="form-control pd-y-12" name="tipo_activo" id="tipo_activo">
                                             <option value="A">Seleccione...</option>
-                                            <option value="Fijo">Activo Fijo</option>
                                             <option value="Diferido">Activo Diferido</option>
                                             <option value="Circulante">Activo Circulante</option>
                                         </select>
@@ -1085,6 +1084,7 @@
                             // Si es exitosa muestra un resultado
                             bootbox.alert(result.mensaje);
                             llenarInversionesDesglose();
+                            llenarInversiones();
                         }).fail(function (){
                             // En caso contrario muestra este mensaje
                             bootbox.alert('El registro no fue eliminado');
@@ -1586,6 +1586,7 @@
                     if(data.success){
                         // Recarga las tablas
                         llenarInversionesDesglose();
+                        llenarInversiones();
                         // Esconde el modal
                         $('#modalAddInversionesDesglose').modal('hide');
                         // Y vacia el formulario

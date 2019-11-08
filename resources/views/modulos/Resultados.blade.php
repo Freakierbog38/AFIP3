@@ -294,7 +294,6 @@
             <tr>
                 <th>Destino de las Inversiones</th>
                 <th>Monto</th>
-                <th>Depreciación en porcentaje</th>
                 <th>Tipo de Activo</th>
             </tr>
         </thead>
@@ -303,7 +302,6 @@
             <tr>
                 <td>{{ $dato->destinos_inversiones_destino_recursos }}</td>
                 <td>$ {{ $dato->monto_destino_recursos }}</td>
-                <td>{{ $dato->porcentaje_destino_recursos }} %</td>
                 <td>{{ $dato->tipo_activo_destino_recursos }}</td>
             </tr>
             @endforeach
@@ -391,8 +389,10 @@
 </div><!-- wrapper -->
 
 <div class="section-wrapper mg-t-20">
-    <label class="section-title">Pronósticos de Gastos y Costos</label>
+    <label class="section-title">Programa de Inversiones</label>
+    <p>El presente proyecto se ha analizado a un horizonte de 3 años en el que se considera que no habrán de llevarse a cabo más inversiones adicionales.</p>
 
+    <h3>Pronósticos de Gastos y Costos</h3>
     <h6>Composición de Costo Fijo</h6>
 
     <table class="table table-bordered tx-center">
@@ -418,9 +418,351 @@
         </tbody>
     </table>
 
+    <p>En esta gráfica se puede contemplar el desglose de los costos fijos en los que incurre la empresa mensualmente.</p>
+
     <div id="GraficaCompCostoFijo" class="ht-200 ht-sm-300"></div>
 
+    <br>
+
+    <h6>Composición Costo Variable</h6>
+    <p>En esta gráfica se puede contemplar el desglose de los costos variables en los que incurre la empresa mensualmente.</p>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>Costo Unitario</th>
+                <th>Porcentaje Precio Unitario</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaCompCostoVariable as $dato)
+                <tr>
+                    <td>{{ $dato->concepto_costos_variables_unitarios }}</td>
+                    <td>$ {{ $dato->costoU_costos_variables_unitarios }}</td>
+                    <td>{{ $dato->porcPrecioU_costos_variables_unitarios }} %</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div id="GraficaCompCostoVariable" class="ht-200 ht-sm-300"></div>
+
+    <br>
+
+    <p>En la siguiente tabla puede contemplarse el porcentaje de incremento en variables de crecimiento del negocio proyectadas a 3 años.</p>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Incremento de Precios (%)</th>
+                <th>Incremento en Unidades Vendidas (%)</th>
+                <th>Incremento en Ventas (%)</th>
+                <th>Incremento en Acumulado en Ventas</th>
+                <th>Incremento en Costos Fijos (%)</th>
+                <th>Incremento en Costos Variables (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaIngresosConApoyo as $dato)
+                <tr>
+                    <td>{{ $dato->anio_ingresos_costos_con_apoyo }}</td>
+                    <td>{{ $dato->incremento_precios_ingresos_costos_con_apoyo }} %</td>
+                    <td>{{ $dato->inc_unidades_vendidas_ingresos_costos_con_apoyo }} %</td>
+                    <td>{{ $dato->incremento_ventas_ingresos_costos_con_apoyo }} %</td>
+                    <td>{{ $dato->inc_acumulado_ingresos_costos_con_apoyo }} %</td>
+                    <td>{{ $dato->inc_cortes_fijos_ingresos_costos_con_apoyo }}</td>
+                    <td>{{ $dato->inc_cortes_variables_ingresos_costos_con_apoyo }} %</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <p>A continuación, se presenta el análisis de margen de contribución presentando las tendencias de los costos variables y fijos.</p>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Ingresos Totales</th>
+                <th>Costos Variable</th>
+                <th>Margen de Contribución</th>
+                <th>Costos Fijo</th>
+                <th>Utilidad de Operación</th>
+                <th>Porcentaje de Utilidad de Operación</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaUtilidadConProyecto as $dato)
+                <tr>
+                    <td>{{ $dato->anio_analisis_utilidad_operacion_con_proyecto }}</td>
+                    <td>$ {{ $dato->ingresos_totales_analisis_utilidad_operacion_con_proyecto }}</td>
+                    <td>$ {{ $dato->cv_analisis_utilidad_operacion_con_proyecto }}</td>
+                    <td>{{ $dato->margen_contribucion_analisis_utilidad_operacion_con_proyecto }}</td>
+                    <td>$ {{ $dato->cf_analisis_utilidad_operacion_con_proyecto }}</td>
+                    <td>{{ $dato->utilidad_operacion_analisis_utilidad_operacion_con_proyecto }}</td>
+                    <td>{{ $dato->porcentaje_utilidad_analisis_utilidad_operacion_con_proyecto }} %</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
 </div><!-- wrapper -->
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Balance General</label>
+    <p>Con la finalidad de evaluar los incrementos o decrementos de los activos del negocio se construyó el siguiente balance general proyectado.</p>
+
+    <div id="GraficaActivosTotales" class="ht-200 ht-sm-300"></div>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Efectivo</th>
+                <th>Cuentas por Cobrar</th>
+                <th>Inventarios</th>
+                <th>Otros Activos Circulantes</th>
+                <th>Total Activo Circulante</th>
+                <th>Activo Fijo Neto</th>
+                <th>Activo Diferido</th>
+                <th>Total Activo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaTotalActivos as $dato)
+                <tr>
+                    <td>{{ $dato->anio_total_activo }}</td>
+                    <td>{{ $dato->efectivo_total_activo }}</td>
+                    <td>{{ $dato->cuentas_cobrar_total_activo }}</td>
+                    <td>{{ $dato->inventarios_total_activo }}</td>
+                    <td>{{ $dato->otros_circulantes_total_activo }}</td>
+                    <td>{{ $dato->total_circulante_total_activo }}</td>
+                    <td>{{ $dato->fijo_neto_total_activo }}</td>
+                    <td>{{ $dato->total_diferido_total_activo }}</td>
+                    <td>{{ $dato->total_activos_total_activo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <br>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Proveedores</th>
+                <th>Otros Pasivos Circulantes</th>
+                <th>Bancos Corto Plazo</th>
+                <th>Total Pasivo Circulante</th>
+                <th>Total Pasivo Largo Plazo</th>
+                <th>Total Pasivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaTotalPasivos as $dato)
+                <tr>
+                    <td>{{ $dato->anio_total_pasivo }}</td>
+                    <td>{{ $dato->proveedores_total_pasivo }}</td>
+                    <td>{{ $dato->otros_circulantes_total_pasivo }}</td>
+                    <td>{{ $dato->bancos_corto_plazo_total_pasivo }}</td>
+                    <td>{{ $dato->total_circulante_total_pasivo }}</td>
+                    <td>{{ $dato->total_largo_plazo_total_pasivo }}</td>
+                    <td>{{ $dato->total_pasivos_total_pasivo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <br>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Total Pasivo</th>
+                <th>Total Capital</th>
+                <th>Pasivo + Capital</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaTotalPasivosCapital as $dato)
+                <tr>
+                    <td>{{ $dato->anio_totales_pasivo_capital }}</td>
+                    <td>{{ $dato->total_pasivo_totales_pasivo_capital }}</td>
+                    <td>{{ $dato->total_capital_totales_pasivo_capital }}</td>
+                    <td>{{ $dato->capital_pasivo_totales_pasivo_capital }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</div>
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Estado de Resultados</label>
+    <p>Con la finalidad de evaluar la capacidad de generar utilidades del proyecto de inversión, se elaboró el Estado de Resultados proyectado para los próximos 3 ejercicios de operación de la vida del negocio.</p>
+
+    <div id="GraficaEstadoResultados" class="ht-200 ht-sm-300"></div>
+    
+</div>
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Flujo Neto de Efectivo Anual</label>
+    <p>Como pilar fundamental para la determinación del valor presente del proyecto se construyeron los flujos de efectivo de los años 1 al 3. En la tabla de abajo se especifíca la tasa de descuento (Tasa de Rendimiento Esperado Mínimo Aceptable), que equivale a la inflación anual esperada para el periodo de análisis.</p>
+    <p>El flujo neto de efectivo se encuentra calculado mediante un análisis de flujos incrementales, es decir utilizando el escenario bajo flujos netos de efectivo con apoyo y flujos neto sde efectivo sin apoyi de la operación normal del negocio.</p>
+    <p>Dicho estado financiero se presenta a continuación:</p>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Créditos Bancarios</th>
+                <th>Ventas y Cobranza</th>
+                <th>Acreedores Diversos</th>
+                <th>Total Fuentes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaEntredasEfectivo as $dato)
+                <tr>
+                    <td>{{ $dato->anio_entradas_efectivo2 }}</td>
+                    <td>{{ $dato->creditos_bancarios }}</td>
+                    <td>{{ $dato->ventas_cobranza_entradas_efectivo2 }}</td>
+                    <td>{{ $dato->acreedores_diversos_entradas_efectivo2 }}</td>
+                    <td>{{ $dato->total_entradas_efectivo2 }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div id="GraficaFlujoEfectivoAnual" class="ht-200 ht-sm-300"></div>
+
+</div>
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Calendario de Reintegros de Intereses, Utilidades y Capital</label>
+    <p>Apegándose a las reglas de operación del PPP PyME; la retribución de los recursos se realizaría bajo pagos fijos mensuales. El cálculo de los recursos restituidos del PPP PyME es el siguiente:</p>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Mes</th>
+                <th>Saldo</th>
+                <th>Pago Capital</th>
+                <th>Pago Int</th>
+                <th>Pago Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaPasivo1 as $dato)
+                <tr>
+                    <td>{{ $dato->anio_composicion_pasivo1_con_apoyo }}</td>
+                    <td>{{ $dato->num_mes_composicion_pasivo1_con_apoyo }}</td>
+                    <td>{{ $dato->saldo_composicion_pasivo1_con_apoyo }}</td>
+                    <td>{{ $dato->pago_capital_composicion_pasivo1_con_apoyo }}</td>
+                    <td>{{ $dato->pago_interes_composicion_pasivo1_con_apoyo }}</td>
+                    <td>{{ $dato->pago_total_composicion_pasivo1_con_apoyo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <br>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Mes</th>
+                <th>Saldo</th>
+                <th>Pago Capital</th>
+                <th>Pago Int</th>
+                <th>Pago Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaPasivo2 as $dato)
+                <tr>
+                    <td>{{ $dato->anio_composicion_pasivo2_con_apoyo }}</td>
+                    <td>{{ $dato->num_mes_composicion_pasivo2_con_apoyo }}</td>
+                    <td>{{ $dato->saldo_composicion_pasivo2_con_apoyo }}</td>
+                    <td>{{ $dato->pago_capital_composicion_pasivo2_con_apoyo }}</td>
+                    <td>{{ $dato->pago_interes_composicion_pasivo2_con_apoyo }}</td>
+                    <td>{{ $dato->pago_total_composicion_pasivo2_con_apoyo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</div>
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Rentabilidad y Beneficio del Proyecto</label>
+    <h6>Valor Presente Neto</h6>
+    <p>Después de evaluar el proyecto por indicadores que consideran el valor del dinero en el tiempo se obtuvieron los siguientes resultados.</p>
+
+    <p class="invoice-info-row">
+        <span>{{ $tablaValorPresenteNeto[0]->nombre_empresa }}</span>
+        <span>$ {{ $tablaValorPresenteNeto[0]->vpn }}</span>
+    </p>
+
+</div>
+
+<div class="section-wrapper mg-t-20">
+    <label class="section-title">Relación Beneficio Costo</label>
+    <p>La relación costo-beneficio establece las veces que las entradas de efectivo (flujos positivos) son superiores a las salidas de efectivo (flujos negativos), incluyendo la inversión inicial traídos a valor presente. Toda vez que la relación costo beneficio es superior a la unidad, el proyecto es viable desde este criterio. A continuación, se presenta el cálculo de la relación beneficio-costo.</p>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Ingresos Totales</th>
+                <th>TD o FA</th>
+                <th>Ingresos Actualizados</th>
+                <th>Costos y Gastos Totales</th>
+                <th>Costos y Gastos Actualizados</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaCostoBeneficio as $dato)
+                <tr>
+                    <td>{{ $dato->anio_evaluacion_proyecto2 }}</td>
+                    <td>{{ $dato->ingresos_totales_evaluacion_proyecto2 }}</td>
+                    <td>{{ $dato->td_fa_evaluacion_proyecto2 }}</td>
+                    <td>{{ $dato->ingresos_actualizados_evaluacion_proyecto2 }}</td>
+                    <td>{{ $dato->costos_gtos_totales_evaluacion_proyecto2 }}</td>
+                    <td>{{ $dato->costos_gtos_actualizados_evaluacion_proyecto2 }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <br>
+
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Beneficio Actualizado</th>
+                <th>Costo Actualizado</th>
+                <th>Relación Beneficio/Costo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaCostoBeneficioTotal as $dato)
+                <tr>
+                    <td>{{ $dato->beneficio_actualizado }}</td>
+                    <td>{{ $dato->costo_actualizado }}</td>
+                    <td>{{ $dato->beneficio_costo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</div>
 
 @endsection
 
@@ -714,7 +1056,279 @@ $(function(){
     var CompCostoFijoChart = echarts.init(CompCostoFijo);
     CompCostoFijoChart.setOption(CompCostoFijoOption);
 
-});
+    /**************** COMPOSICIÓN DE COSTOS VARIABLES - GRÁFICA PASTEL ************/
+    var CompCostoVariableData = [{
+        name: 'Monto',
+        type: 'pie',
+        radius: '75%',
+        center: ['50%', '57.5%'],
+        data: [
+            @foreach($tablaCompCostoVariable as $dato)
+                {
+                    value: {{$dato->costoU_costos_variables_unitarios}}, 
+                    name: '{{$dato->concepto_costos_variables_unitarios}}'
+                },
+            @endforeach
+        ],
+        label: {
+            normal: {
+                fontFamily: 'Roboto, sans-serif',
+                fontSize: 11
+            }
+        },
+        labelLine: {
+            normal: {
+                show: true
+            }
+        },
+        markLine: {
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            }
+        }
+    }];
 
+    var CompCostoVariableOption = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)',
+            textStyle: {
+                fontSize: 11,
+                fontFamily: 'Roboto, sans-serif'
+            }
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'right',
+            data: [
+                @foreach($tablaCompCostoVariable as $dato)
+                    '{{$dato->concepto_costos_variables_unitarios}}',
+                @endforeach
+            ]
+        },
+        series: CompCostoVariableData
+    };
+
+    var CompCostoVariable = document.getElementById('GraficaCompCostoVariable');
+    var CompCostoVariableChart = echarts.init(CompCostoVariable);
+    CompCostoVariableChart.setOption(CompCostoVariableOption);
+
+
+    /********************** ACTIVOS TOTALES PROYECTADOS - GRÁFICA LINEAL ***********************/
+    var ActivosTotalesData = [
+        {
+        name: 'Total',
+        type: 'line',
+        data: [
+            @foreach($tablaTotalActivos as $dato)
+                {{ $dato->total_activos_total_activo }},
+            @endforeach
+            ]
+        }
+    ];
+
+    var ActivosTotalesOption = {
+        grid: {
+            top: '6',
+            right: '0',
+            bottom: '17',
+            left: '25',
+        },
+        tooltip:{
+            trigger: 'axis'
+        },
+        xAxis: {
+            data: [ 
+                @foreach($tablaTotalActivos as $dato)
+                    'Año {{ $dato->anio_total_activo }}',
+                @endforeach
+            ],
+            axisLine: {
+                lineStyle: {
+                    color: '#ccc'
+                }
+            },
+            label: {
+                normal: {
+                    fontFamily: 'Roboto, sans-serif',
+                    fontSize: 11
+                }
+            },
+            axisLabel: {
+                fontSize: 10,
+                color: '#666'
+            }
+        },
+        yAxis: {
+            splitLine: {
+                lineStyle: {
+                color: '#ddd'
+                }
+            },
+            axisLine: {
+                lineStyle: {
+                color: '#ccc'
+                }
+            },
+            axisLabel: {
+                fontSize: 10,
+                color: '#666'
+            }
+        },
+        series: ActivosTotalesData
+    };
+
+    var ActivosTotales = document.getElementById('GraficaActivosTotales');
+    var ActivosTotalesChart = echarts.init(ActivosTotales);
+    ActivosTotalesChart.setOption(ActivosTotalesOption);
+
+    /********************** ESTADO DE RESULTADOS - GRÁFICA LINEAL ***********************/
+    var EstadoResultadoData = [
+        {
+            name: 'Utilidad Neta',
+            type: 'line',
+            data: [
+                @foreach($graficaEstadoResultados as $dato)
+                    {{ $dato->utilidad_neta_estado_resultados_1 }},
+                @endforeach
+                ]
+        }
+    ];
+
+    var EstadoResultadoOption = {
+        grid: {
+            top: '6',
+            right: '0',
+            bottom: '17',
+            left: '25',
+        },
+        tooltip:{
+            trigger: 'axis'
+        },
+        xAxis: {
+            data: [ 
+                @foreach($graficaEstadoResultados as $dato)
+                    'Año {{ $dato->anio_estado_resultados_1 }}',
+                @endforeach
+            ],
+            axisLine: {
+                lineStyle: {
+                    color: '#ccc'
+                }
+            },
+            label: {
+                normal: {
+                    fontFamily: 'Roboto, sans-serif',
+                    fontSize: 11
+                }
+            },
+            axisLabel: {
+                fontSize: 10,
+                color: '#666'
+            }
+        },
+        yAxis: {
+            splitLine: {
+                lineStyle: {
+                color: '#ddd'
+                }
+            },
+            axisLine: {
+                lineStyle: {
+                color: '#ccc'
+                }
+            },
+            axisLabel: {
+                fontSize: 10,
+                color: '#666'
+            }
+        },
+        series: EstadoResultadoData
+    };
+
+    var EstadoResultado = document.getElementById('GraficaEstadoResultados');
+    var EstadoResultadoChart = echarts.init(EstadoResultado);
+    EstadoResultadoChart.setOption(EstadoResultadoOption);
+
+    /********************** FLUJO EFECTIVO NETO ANUAL - GRÁFICA LINEAL ***********************/
+    var FlujoEfectivoAnualData = [
+        {
+            name: 'Flujo Positivo',
+            type: 'line',
+            data: [
+                @foreach($graficaFlujoEfectivoAnual as $dato)
+                    {{ $dato->flujos_positivos_evaluacion_proyecto1 }},
+                @endforeach
+                ]
+        },
+        {
+            name: 'Flujo Negativo',
+            type: 'line',
+            data: [
+                @foreach($graficaFlujoEfectivoAnual as $dato)
+                    {{ $dato->flujos_negativos_evaluacion_proyecto1 }},
+                @endforeach
+                ]
+        }
+    ];
+
+    var FlujoEfectivoAnualOption = {
+        grid: {
+            top: '6',
+            right: '0',
+            bottom: '17',
+            left: '25',
+        },
+        tooltip:{
+            trigger: 'axis'
+        },
+        xAxis: {
+            data: [ 
+                @foreach($graficaFlujoEfectivoAnual as $dato)
+                    'Año {{ $dato->anio_evaluacion_proyecto1 }}',
+                @endforeach
+            ],
+            axisLine: {
+                lineStyle: {
+                    color: '#ccc'
+                }
+            },
+            label: {
+                normal: {
+                    fontFamily: 'Roboto, sans-serif',
+                    fontSize: 11
+                }
+            },
+            axisLabel: {
+                fontSize: 10,
+                color: '#666'
+            }
+        },
+        yAxis: {
+            splitLine: {
+                lineStyle: {
+                color: '#ddd'
+                }
+            },
+            axisLine: {
+                lineStyle: {
+                color: '#ccc'
+                }
+            },
+            axisLabel: {
+                fontSize: 10,
+                color: '#666'
+            }
+        },
+        series: FlujoEfectivoAnualData
+    };
+
+    var FlujoEfectivoAnual = document.getElementById('GraficaFlujoEfectivoAnual');
+    var FlujoEfectivoAnualChart = echarts.init(FlujoEfectivoAnual);
+    FlujoEfectivoAnualChart.setOption(FlujoEfectivoAnualOption);
+
+});
 </script>
 @endsection

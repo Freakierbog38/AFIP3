@@ -25,6 +25,9 @@ Route::group(['middleware' => 'auth'], function( ){
         return view('modulos/principal', ['title' => 'AFIP', 'prince' => true]);
     });
 
+    // Ruta para registrar la empresa del usuario, y así terminar el registro
+    Route::post('registroEmpresa', 'UsuariosController@registroEmpresa');
+
     Route::get('/info', function() {
         return view('modulos/info', ['title' => '¿Qué es AFIP?']);
     });

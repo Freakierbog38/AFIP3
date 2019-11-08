@@ -431,8 +431,7 @@
                     emptyTable: "No hay datos en esta tabla.",
                     info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                     infoEmpty: "Mostrando 0 de 0 entradas",
-                },
-                order: [this.lenght-1, 'desc']
+                }
             });
         });
 
@@ -707,6 +706,22 @@
                         });
                     }
 
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    bootbox.dialog({
+                        title: '¡Error!',
+                        message: '<p> Ocurrió un error :( </p>',
+                        size: 'small',
+                        backdrop: false,
+                        buttons: {
+                            weno: {
+                                className: 'btn btn-danger'
+                            }
+                        },
+                    });
                 }
             });
 
@@ -763,9 +778,25 @@
                                 ok: {
                                     className: 'btn btn-success'
                                 }
-                            },
+                            }
                         });
                     }
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    bootbox.dialog({
+                        title: '¡Error!',
+                        message: '<p> Ocurrió un error :( </p>',
+                        size: 'small',
+                        backdrop: false,
+                        buttons: {
+                            weno: {
+                                className: 'btn btn-danger'
+                            }
+                        },
+                    });
                 }
             });
         });

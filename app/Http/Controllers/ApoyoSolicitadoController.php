@@ -549,9 +549,8 @@ class ApoyoSolicitadoController extends Controller
             <table id="TablaInversiones" class="table display responsive nowrap">
                 <thead>
                     <tr class="tx-center">
-                        <th>Fuente de Financiamiento</th>
+                        <th>Concepto</th>
                         <th>Monto</th>
-                        <th>Depreciación en porcentaje</th>
                         <th>Tipo de Activo</th>
                         <th></th>
                     </tr>
@@ -563,7 +562,6 @@ class ApoyoSolicitadoController extends Controller
                 <tr class="tx-center">
                     <td>'.$row->destinos_inversiones_destino_recursos.'</td>
                     <td>$ '.$row->monto_destino_recursos.'</td>
-                    <td>'.$row->porcentaje_destino_recursos.' %</td>
                     <td>'.$row->tipo_activo_destino_recursos.'</td>
                     <td><button onclick="borrarInversiones('.$row->id_destino_recursos.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>

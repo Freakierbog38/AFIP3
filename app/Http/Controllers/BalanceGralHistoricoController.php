@@ -282,7 +282,7 @@ class BalanceGralHistoricoController extends Controller
         $tabla .= '
                 <tr class="tx-bold">
                     <td>Total</td>
-                    <td>$ '.($total['totalMes'] / $total['cantidad']).'</td>
+                    <td>$ '.round( ($total['totalMes'] / $total['cantidad']), 2 ).'</td>
                     <td>'.$total['cantidad'].'</td>
                     <td>$ '.$total['totalMes'].'</td>
                     <td></td>
