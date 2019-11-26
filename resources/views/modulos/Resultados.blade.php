@@ -14,9 +14,9 @@
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Datos de la empresa</label>
     
-    <p> <span class="tx-bold">Nombre de la empresa:</span> <span class="tx-right">Empresa</span> </p>
-    <p> <span class="tx-bold">Representante legal:</span> <span class="tx-right">Representante</span> </p>
-    <p> <span class="tx-bold">Giro de la empresa:</span> <span class="tx-right">Giro</span> </p>
+    <p> <span class="tx-bold">Nombre de la empresa:</span> <span class="tx-right">{{ $datosEmpresa[0]->nombre_empresa }}</span> </p>
+    <p> <span class="tx-bold">Representante legal:</span> <span class="tx-right">{{ $datosEmpresa[0]->nombre_representante_legal . " " . $datosEmpresa[0]->paterno_representante_legal . " " . $datosEmpresa[0]->materno_representante_legal }}</span> </p>
+    <p> <span class="tx-bold">Giro de la empresa:</span> <span class="tx-right">{{ $datosEmpresa[0]->giro_empresa }}</span> </p>
     
 </div><!-- wrapper -->
 
@@ -68,7 +68,7 @@
     
     <div class="row">
         <div class="col-md-6">
-            <h4>Niveles actuales de producción</h4>
+            <h4>Capacidad instalada</h4>
             <p class="invoice-info-row">
                 <span>Unidades Producidas al Mes</span>
                 <span>{{ $tablaCapInstalada[0]->unidades_producidas_mes }} unidades</span>
@@ -79,7 +79,7 @@
             </p>
         </div>
         <div class="col-md-6">
-            <h4>Capacidad instalada</h4>
+        <h4>Niveles actuales de producción</h4>
             <p class="invoice-info-row">
                 <span>Maximo Unidades al Mes</span>
                 <span>{{ $tablaCapInstalada2[0]->maximo_unidades_mes_capacidad_instalada }} unidades</span>
@@ -313,7 +313,9 @@
     <div id="GraficaDestinoInversiones" class="ht-200 ht-sm-300"></div>
 
 </div><!-- wrapper -->
-
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////// ESTADO Y ORIGEN DE LA APLICACIÓN ////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Estado de Origen y Aplicación</label>
     <br>
@@ -388,6 +390,9 @@
 
 </div><!-- wrapper -->
 
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////// PROGRAMA DE INVERSIONES ////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Programa de Inversiones</label>
     <p>El presente proyecto se ha analizado a un horizonte de 3 años en el que se considera que no habrán de llevarse a cabo más inversiones adicionales.</p>
@@ -510,6 +515,9 @@
 
 </div><!-- wrapper -->
 
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- ////////////////////////////////// BALANCE GENERAL /////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Balance General</label>
     <p>Con la finalidad de evaluar los incrementos o decrementos de los activos del negocio se construyó el siguiente balance general proyectado.</p>
@@ -601,6 +609,9 @@
 
 </div>
 
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- //////////////////////////////////// ESTADO DE RESULTADOS //////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Estado de Resultados</label>
     <p>Con la finalidad de evaluar la capacidad de generar utilidades del proyecto de inversión, se elaboró el Estado de Resultados proyectado para los próximos 3 ejercicios de operación de la vida del negocio.</p>
@@ -642,6 +653,9 @@
 
 </div>
 
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- //////////////////////////////////// CALENDARIO ////////////////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Calendario de Reintegros de Intereses, Utilidades y Capital</label>
     <p>Apegándose a las reglas de operación del PPP PyME; la retribución de los recursos se realizaría bajo pagos fijos mensuales. El cálculo de los recursos restituidos del PPP PyME es el siguiente:</p>
@@ -700,6 +714,9 @@
 
 </div>
 
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////// RENTABILIDAD Y BENEFICIO ///////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Rentabilidad y Beneficio del Proyecto</label>
     <h6>Valor Presente Neto</h6>
@@ -712,6 +729,9 @@
 
 </div>
 
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- //////////////////////////////// RELACIÓN BENEFICIO COSTO //////////////////////////////////// -->
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Relación Beneficio Costo</label>
     <p>La relación costo-beneficio establece las veces que las entradas de efectivo (flujos positivos) son superiores a las salidas de efectivo (flujos negativos), incluyendo la inversión inicial traídos a valor presente. Toda vez que la relación costo beneficio es superior a la unidad, el proyecto es viable desde este criterio. A continuación, se presenta el cálculo de la relación beneficio-costo.</p>

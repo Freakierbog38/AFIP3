@@ -198,6 +198,8 @@ class ApoyoSolicitadoController extends Controller
     // Agrega los registros de Pasivos Adicionales en el Desarrollo
     public function addPasivosDesarollo(Request $request)
     {
+        if($request->tipo_tas != "Fijo" && $request->tipo_tas != "Variable")
+            $request->tipo_tas = NULL;
         // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
             'clave' => 'required',
@@ -206,8 +208,7 @@ class ApoyoSolicitadoController extends Controller
             'tipo_tas' => 'required',
             'interes' => 'required',
             'plazo' => 'required',
-            'gracia' => 'required',
-            'pagos' => 'required'
+            'gracia' => 'required'
         );
 
         // Se validan
@@ -220,6 +221,8 @@ class ApoyoSolicitadoController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
+        $pagos = $request->plazo - $request->gracia;
+
         // Si no hubo errores se ejecuta el procedimiento almacenado
         \DB::select('CALL VIII_pro_insert_pasivos_adicionales(?,?,?,?,?,?,?,?,?)', array(
             $request->clave,
@@ -229,7 +232,7 @@ class ApoyoSolicitadoController extends Controller
             $request->interes,
             $request->plazo,
             $request->gracia,
-            $request->pagos,
+            $pagos,
             \Auth::user()->id_usuario
         ));
 

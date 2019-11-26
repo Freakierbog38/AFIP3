@@ -26,6 +26,9 @@ Route::group(['middleware' => 'auth'], function( ){
     });
 
     // Ruta para registrar la empresa del usuario, y así terminar el registro
+    Route::get('formEmpresa', 'UsuariosController@formEmpresa');
+
+    // Ruta para registrar la empresa del usuario, y así terminar el registro
     Route::post('registroEmpresa', 'UsuariosController@registroEmpresa');
 
     Route::get('/info', function() {

@@ -167,7 +167,7 @@ class IndiceProduccionController extends Controller
         }
 
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL IX_pro_insert_indice_ventas(?,?,?,?,?,?,?,?,?,?,?,?,?)', array(
+        \DB::select('CALL IX_pro_insert_indice_ventas(?,?,?,?, ?,?,?,?, ?,?,?,?, ?)', array(
             $request->ventas1,
             $request->ventas2,
             $request->ventas3,
@@ -179,7 +179,7 @@ class IndiceProduccionController extends Controller
             $request->ventas9,
             $request->ventas10,
             $request->ventas11,
-            $request->ventas11,
+            $request->ventas12,
             \Auth::user()->id_usuario
         ));
 

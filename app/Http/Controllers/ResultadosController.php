@@ -11,7 +11,43 @@ class ResultadosController extends Controller
     public function index(){
 
         ///////// Genera los calculos para la evaluación
-        $calculos = DB::select('CALL calculo_afip(?)', array( \Auth::user()->id_usuario ) );
+        // $calculos = DB::select('CALL calculo_afip(?)', array( \Auth::user()->id_usuario ) );
+
+        $calculos = DB::select('CALL AFIP_I_analisis_de_financiamiento(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_I_analisis_de_financiamiento2(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_II_programa_produccion(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_III_analisis_del_proyecto(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_I(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_II(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_III(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_IV(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_IV_estado_de_resultados_I(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_IV_estado_de_resultados_II(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_V(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_VI(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_VII(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_V_flujo_de_efectivo_VIII(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_I(?)', array( \Auth::user()->id_usuario ) );
+        //$calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_II(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_III(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_IV(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_V(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_VI(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_VII(?)', array( \Auth::user()->id_usuario ) );
+        $calculos = DB::select('CALL AFIP_VI_BALANCE_GENERAL_VIII(?)', array( \Auth::user()->id_usuario ) );
+        
+        $calculos = DB::select('CALL AFIP_VIII_evaluacion_de_proyecto(?)', array( \Auth::user()->id_usuario ) );
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////// Datos de la empresa ////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        $datosEmpresa = DB::select('CALL get_perfil(?)', array( \Auth::user()->id_usuario ) );
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////// Datos de Mezcla de Productos y Servicios //////////////////////////
@@ -28,7 +64,7 @@ class ResultadosController extends Controller
         $tablaCapInstalada = DB::select('CALL IV_pro_get_produccion_actual(?)', array( \Auth::user()->id_usuario ) );
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////// Capacidad Instalada de la Empresa ///////////////////////////////
+        ////////////////////////////// Estacionalidad de Ventas ////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////////
         $tablaEstacionVentas = DB::select('CALL II_pro_select_estacionalidad_ventas_id(?)', array( \Auth::user()->id_usuario ) );
 
@@ -137,6 +173,7 @@ class ResultadosController extends Controller
         return view('modulos.Resultados', 
             [
                 'title'                     => 'Reporte AFIP',
+                'datosEmpresa'              => $datosEmpresa,
                 'tablaMezclaProSer'         => $tablaMezclaProSer,
                 'tablaTotalMezclaProSer'    => $tablaTotalMezclaProSer,
                 'tablaCapInstalada'         => $tablaCapInstalada,

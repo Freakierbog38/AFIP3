@@ -235,7 +235,7 @@
 
                                     <div class="form-group">
                                         <label class="tx-bold">Tipo de Financiamiento:</label>
-                                        <input type="text" id="tipo_fin" name="tipo_fin" class="form-control pd-y-12" placeholder="Ingrese aqui el Tipo de Financiamiento" required>
+                                        <input type="text" id="tipo_fin" name="tipo_fin" class="form-control pd-y-12" placeholder="Crédito refaccionario, Avio, etc." required>
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
@@ -245,12 +245,16 @@
 
                                     <div class="form-group">
                                         <label class="tx-bold">Tipo de Tasa:</label>
-                                        <input type="text" id="tipo_tas" name="tipo_tas" class="form-control pd-y-12" placeholder="Ingrese aqui el tipo de tasa" required>
+                                        <select class="form-control pd-y-12" name="tipo_tas" id="tipo_tas">
+                                            <option value="A">Seleccione...</option>
+                                            <option value="Fijo">Activo Fijo</option>
+                                            <option value="Variable">Activo Variable</option>
+                                        </select>
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
                                         <label class="tx-bold">Interes (%):</label>
-                                        <input type="number" id="interes" name="interes" class="form-control pd-y-12" step="0.01" placeholder="Ingrese aqui el incremento" required>
+                                        <input type="number" id="interes" name="interes" class="form-control pd-y-12" step="0.01" placeholder="Ingrese en porcentaje de interés anual" required>
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
@@ -261,11 +265,6 @@
                                     <div class="form-group">
                                         <label class="tx-bold">Gracia en Numero de Meses:</label>
                                         <input type="number" id="gracia" name="gracia" class="form-control pd-y-12" step="1" placeholder="Ingrese aqui el plazo en meses" required>
-                                    </div><!-- form-group -->
-
-                                    <div class="form-group">
-                                        <label class="tx-bold">Pagos en Numero de Meses:</label>
-                                        <input type="number" id="pagos" name="pagos" class="form-control pd-y-12" max="36" step="1" placeholder="Ingrese aqui el plazo en meses" required>
                                     </div><!-- form-group -->
 
                                     <div class="modal-footer">
