@@ -139,6 +139,9 @@ Route::group(['middleware' => 'auth', 'prefix'=> 'analisisCapacidadInstalada'], 
 
     // Agrega el registro de Capacidad Instalada
     Route::post('/addCapacidadInstalada', 'CapacidadInstaladaController@addCapacidadInstalada');
+    
+    //Editar el registro unico de capacidad instalada 
+    Route::post('/editCapacidadInstalada', 'CapacidadInstaladaController@editCapacidadInstalada');
 
 });
 

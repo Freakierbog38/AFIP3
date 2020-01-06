@@ -8,9 +8,9 @@
             <li class="nav-item">
                 <a class="nav-link active" href="#VentasProdSer" data-toggle="tab">Ventas de Productos o Servicios</a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="#EstacionVentas" data-toggle="tab">Estacionalidad de las Ventas</a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="#Resultados" data-toggle="tab">Resultados de Tabla en Pesos Mexicanos</a>
             </li>
@@ -358,7 +358,7 @@
             $('#TablaAnalisisVentas').DataTable({
                 bLengthChange: false,
                 searching: false,
-                responsive: false,
+                responsive: true,
                 language: {
                     paginate : {
                         next: "Siguiente",
@@ -428,11 +428,11 @@
         // Petición POST a la url
         $.post(enlace, data, function(response){
             // Se rellenan los input con los valores traidos de la bd
-            $('#editProductoServicio').val(response.PD[0].nombre_producto_servicio_mezcla_productos_servicios_1_anio);
-            $('#editUnidadesMes').val(response.PD[0].precio_u_producto_servicio_mezcla_productos_servicios_1_anio);
-            $('#editPrecioUnitario').val(response.PD[0].us_producto_servicio_mezcla_productos_servicios_1_anio);
-            $('#editmult').val(response.PD[0].ventas_producto_servicio_mezcla_productos_servicios_1_anio);
-            $('#editID').val(response.PD[0].id_producto_servicio_mezcla_productos_servicios_1_anio);
+            $('#editProductoServicio').val(response.PD[0].nombre);
+            $('#editUnidadesMes').val(response.PD[0].unidades_mes);
+            $('#editPrecioUnitario').val(response.PD[0].precio);
+            $('#editmult').val(response.PD[0].ventas_mes);
+            $('#editID').val(response.PD[0].id);
         });
 
         $('#FormVentasProdSer-Edit').modal("show");

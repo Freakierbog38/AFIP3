@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Fecha_balance_general;
+use App\Activos;
+use App\Desglose_activo;
+use App\Pasivo;
+use App\Capital_contable;
 class BalanceGralHistoricoController extends Controller
 {
     // Muestra la vista principal de módulo
     public function show(){
         return view('modulos/BalanceGeneralHistorico', ['title' => 'Sección 4: Balance General Histórico']);
-    }
+    } 
 
     // Función que agrega la fecha a un Balance General Historico
     public function addFechaBalanceGral(Request $request)
@@ -33,31 +37,40 @@ class BalanceGralHistoricoController extends Controller
         $anio = explode("-", $request->fecha_bal)[0];
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL V_pro_insert_fecha_balance(?,?,?,?)', array(
-            $anio,
-            $request->fecha_bal,
-            $request->numero_mes,
-            \Auth::user()->id_usuario
-        ));
+        $id_empresa=\Auth::user()->id_empresa;
+         
+        $datos= Fecha_balance_general::updateOrInsert(
+            ['id_empresa'=>$id_empresa],
 
+            ['anio'=>$anio,
+            'fecha'=>$request->fecha_bal,
+            'numero_meses'=>$request->numero_mes,
+            'id_empresa'=>$id_empresa]
+        
+        );
+        
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!']);
     }
 
     // Regresa una variable con la fecha de Balance General
     public function getFechaBalanceGral(){
+        
+
         // Hace la consulta y lo guarda en una variable
-        $fecha = \DB::select('CALL V_pro_select_fecha_balance_id(?)', array(\Auth::user()->id_usuario));
+        $fecha = Fecha_balance_general::where('id_empresa','=',\Auth::user()->id_empresa)->get();
 
         // Se inicia la variable para guardar el contenido html por mostrar
         $tabla = '';
         
         // Revisa si la variable tiene contenido
         if($fecha){
-            $tabla .= $fecha[0]->fecha_fecha_balance_general_historico.' ('.$fecha[0]->numero_meses_fecha_balance_general_historico.' meses)';
+            $tabla .= $fecha[0]->fecha.' ('.$fecha[0]->numero_meses.' meses)';
+           
         }
         else{
             $tabla .= 'No hay fecha asignada';
+           
         }
         
         // Retorna la tabla
@@ -85,11 +98,12 @@ class BalanceGralHistoricoController extends Controller
         }
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL V_pro_insert_activos(?,?,?)', array(
-            $request->activo_cir,
-            $request->activo_dif,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Activos;
+        $datos->circulante=$request->activo_cir;
+        $datos->fijo=0;
+        $datos->diferido=$request->activo_dif;
+        $datos->id_empresa=\Auth::user()->id_empresa;
+        $datos->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!']);
@@ -98,37 +112,44 @@ class BalanceGralHistoricoController extends Controller
     // Regresa una variable con la tabla de Activos
     public function getActivos(){
         // Hace la consulta y lo guarda en una variable
-        $activos = \DB::select('CALL V_pro_select_activos_id(?)', array(\Auth::user()->id_usuario));
+        //$acti = Activos::where('id_empresa','=',\Auth::user()->id_empresa)->get();
+        $acti= Activos::where('id_empresa','=',\Auth::user()->id_empresa)->get();
 
         // Se inicia la variable para guardar el contenido html por mostrar
         $tabla = '';
         $boton = '<a href="#modalAddActivo" class="modal-effect btn btn-oblong btn-success" data-toggle="modal" data-effect="effect-slide-in-bottom">Agregar</a>';
-        
+        $total=0; //$activos[0]->circulante+$activos[0]->fijo+$activos[0]->diferido;
+        $n=0;
+        $datosReturn=array('total_activos'=>0);
         // Revisa si la variable tiene contenido
-        if($activos){
+        foreach($acti as $activos){
+            $total=$activos->circulante+$activos->fijo+$activos->diferido; 
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
                     <span>Activo Circulante</span>
-                    <span>$ '.$activos[0]->activo_circulante_desgloce_activos.'</span>
+                    <span>$ '.number_format($activos->circulante,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Activo Fijo</span>
-                    <span>$ '.$activos[0]->activo_fijo_desgloce_activos.'</span>
+                    <span>$ '.number_format($activos->fijo,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Activo Diferido</span>
-                    <span>$ '.$activos[0]->activo_diferido_desgloce_activos.'</span>
+                    <span>$ '.number_format($activos->diferido,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span class="tx-bold">Total</span>
-                    <span class="tx-bold">$ '.$activos[0]->total_desgloce_activos_1_desgloce_activos.'</span>
+                    <span class="tx-bold">$ '.number_format($total,2).'</span>
                 </p>
             </div>';
 
             $boton = '<a href="#modalAddActivo" class="modal-effect btn btn-oblong btn-warning" data-toggle="modal" data-effect="effect-slide-in-bottom">Editar</a>';
+            $n++;
+            $datosReturn['total_activos']=$total;
         }
-        else{
+        
+        if($n==0){
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
@@ -151,7 +172,7 @@ class BalanceGralHistoricoController extends Controller
         }
         
         // Retorna la tabla
-        return response()->json(['tabla' => $tabla, 'boton' => $boton]);
+        return response()->json(['tabla' => $tabla, 'boton' => $boton, 'datos' => $datosReturn]);
         
     }
 
@@ -178,25 +199,30 @@ class BalanceGralHistoricoController extends Controller
         }
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL V_pro_insert_activos_fijos(?,?,?,?,?,?)', array(
-            $request->activo_fijo,
-            $request->monto_activo,
-            $request->valor_un,
-            $request->depreciacion,
-            $request->anios_restantes,
-            \Auth::user()->id_usuario
-        ));
+        $id_empresa=\Auth::user()->id_usuario;
+        
+        $datos = new Desglose_activo;
+        $total = $request->valor_un*$request->monto_activo;
+
+        $datos->concepto = $request->activo_fijo;
+        $datos->cantidad = $request->valor_un;
+        $datos->valor_historico = $request->monto_activo;
+        $datos->total = $total;
+        $datos->depreciacion = $request->depreciacion;
+        $datos->anios_restantes = $request->anios_restantes;
+        $datos->id_empresa = $id_empresa;
+        $datos->save();
+        
 
         // Y regresa mensaje de éxito
-        return response()->json(['success' => '¡Agregado con éxito!']);
+        return response()->json(['success' => '¡Agregado con éxito!', 'valor'=>0]);
     }
 
     // Función que devuelve el contenido de un Desglose Activo
     public function getUnDesgloseActivo($id)
     {
         // Se realiza la solicitud
-        $activoD = \DB::select('CALL V_pro_select_activo_fijo(?)', array($id));
-        
+        $activoD = Desglose_activo::where('id','=',$id)->get();
         // Y regresa el registro
         return \Response::json( array(
             'AD' => $activoD,
@@ -240,12 +266,16 @@ class BalanceGralHistoricoController extends Controller
     // Regresa una variable con la tabla de Desglose de Activos
     public function getDesgloseActivos(){
         // Hace la consulta y lo guarda en una variable
-        $activoD = \DB::select('CALL V_pro_select_activos_fijos_id(?)', array(\Auth::user()->id_usuario));
+        $activoD = Desglose_activo::where('id_empresa','=',\Auth::user()->id_empresa)->get();
 
         $total = array(
             'cantidad' => 0,
-            'totalMes' => 0
+            'totalMes' => 0,
+            'depreciacion'=>0,
+            'valor_historico'=>0
         );
+
+        $ite = 0;
 
         // Variable que guarda la tabla a mostrar
         $tabla = '
@@ -253,8 +283,8 @@ class BalanceGralHistoricoController extends Controller
             <thead>
                 <tr>
                     <th>Activo Fijo Aportado</th>
-                    <th>Monto</th>
-                    <th>No. de unidades</th>
+                    <th>Valor Histórico</th>
+                    <th>Cantidad</th>
                     <th>Total</th>
                     <th>Depreciación</th>
                     <th>Años Restantes</th>
@@ -267,45 +297,70 @@ class BalanceGralHistoricoController extends Controller
             // Y se agregan a la tabla
             $tabla .= '
                 <tr>
-                    <td>'.$row->activos_fijos_aportados_desgloce_activos_fijos_aportados.'</td>
-                    <td>$ '.$row->cantidad_desgloce_activos_fijos_aportados.'</td>
-                    <td>'.$row->valor_unidades_desgloce_activos_fijos_aportados.'</td>
-                    <td>$ '.$row->total_desgloce_activos_fijos_aportados.'</td>
-                    <td>$ '.$row->depreciacion_desgloce_activos_fijos_aportados.'</td>
-                    <td>'.$row->anios_restantes_desgloce_activos_fijos_aportados.'</td>
-                    <td><button onclick="borrarDesgloseActivo('.$row->id_desgloce_activos_fijos_aportados.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td> '.$row->concepto.'</td>
+                    <td>$ '.number_format($row->valor_historico,2).'</td>
+                    <td> '.number_format($row->cantidad,2).'</td>
+
+                    <td>$ '.number_format($row->total,2).'</td>
+                    <td>$ '.number_format($row->depreciacion,2).'</td>
+                    <td>'.$row->anios_restantes.'</td>
+                    <td><button onclick="borrarDesgloseActivo('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>';
-            $total['cantidad'] += $row->valor_unidades_desgloce_activos_fijos_aportados;
-            $total['totalMes'] += $row->total_desgloce_activos_fijos_aportados;
+            $total['cantidad'] += $row->cantidad;
+            $total['totalMes'] += $row->total;
+            $total['depreciacion']+=$row->depreciacion;
+            $total['valor_historico']+=$row->valor_historico;
+            $ite++;
         }
 
-        $tabla .= '
-                <tr class="tx-bold">
-                    <td>Total</td>
-                    <td>$ '.round( ($total['totalMes'] / $total['cantidad']), 2 ).'</td>
-                    <td>'.$total['cantidad'].'</td>
-                    <td>$ '.$total['totalMes'].'</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            ';
+        if($ite>0){
+            $tabla .= '
+                    <tr class="tx-bold">
+                        <td>Total</td>
+                        <td>$ '.number_format( $total['valor_historico']/*($total['totalMes'] / $total['cantidad'])*/, 2 ).'</td>
+                        <td> '.number_format($total['cantidad'],2).'</td>
+                        <td>$ '.number_format( $total['totalMes'],2).'</td>
+                        <td>$ '.number_format( $total['depreciacion'],2).'</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                ';
+        }
         
         // Etiquetas de cierre de la tabla   
         $tabla .='
             </tbody>
         </table>';
-        
+
+      //sumaVentasMes = Desglose_activo::where('id_empresa','=',$id_empresa)->sum('total');
+       //el 'find' solo funciona con las llaves primarias de las tablas
+       /*$edit = Activos::where('id_empresa', '=',\Auth::user()->id_empresa);
+       $edit->fijo=$total['totalMes'];
+       $edit->save();*/ 
+
+       $sumaVentasMes=$this->editSumTotalActivoFijo($total['totalMes']);
         // Retorna en formato json
-        return $tabla;
+        return  $var = array('tabla'=>$tabla, 'total'=>$sumaVentasMes);
         
+    }
+
+    public function editSumTotalActivoFijo($total){
+        $id_empresa=\Auth::user()->id_empresa;
+
+        $datos= Activos::updateOrInsert(
+            ['id_empresa'=>$id_empresa],
+
+            ['fijo'=>$total]
+        
+        );
+        return $total;
     }
 
     // Función que elimina un desglose de activo
     public function deleteDesgloseActivo($id, Request $request)
     {
-        $delete = \DB::select('CALL V_pro_delete_activo_fijo(?)', array($id));
-
+        $delete= Desglose_activo::find($id);
+        $delete->delete();
         $mensaje = 'El registro fue eliminado';
         
         if($request->ajax()){
@@ -323,33 +378,45 @@ class BalanceGralHistoricoController extends Controller
     // Regresa una variable con la tabla de Pasivos
     public function getPasivos(){
         // Hace la consulta y lo guarda en una variable
-        $pasivos = \DB::select('CALL V_pro_select_pasivos_id(?)', array(\Auth::user()->id_usuario));
+        $pasiv = Pasivo::where('id_empresa','=',\Auth::user()->id_empresa)->get();
+        //$pasivos = \DB::select('CALL V_pro_select_pasivos_id(?)', array(\Auth::user()->id_usuario));
 
         $tabla = '';
         $boton = '<a href="#modalAddPasivo" class="modal-effect btn btn-oblong btn-success" data-toggle="modal" data-effect="effect-slide-in-bottom">Agregar</a>';
+        $n=0;
+        $total=0;
 
 
         // Revisa si la variable tiene contenido
-        if($pasivos){
+        $datos=array('largo'=>0,'corto'=>0, 'total_pasivos'=>0);
+        foreach($pasiv as $pasivos){
+            $n++;
+            $total=$pasivos->corto_plazo+$pasivos->largo_plazo;
+            
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
                     <span>Pasivo Corto Plazo</span>
-                    <span>$ '.$pasivos[0]->corto_plazo_desgloce_pasivo.'</span>
+                    <span>$ '.number_format($pasivos->corto_plazo,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Pasivo Largo Plazo</span>
-                    <span>$ '.$pasivos[0]->largo_plazo_desgloce_pasivo.'</span>
+                    <span>$ '.number_format($pasivos->largo_plazo,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span class="tx-bold">Total</span>
-                    <span class="tx-bold">$ '.$pasivos[0]->total_desgloce_pasivo.'</span>
+                    <span class="tx-bold">$ '.number_format($total,2).'</span>
                 </p>
             </div>';
+            $datos['corto']=$pasivos->corto_plazo;
+            $datos['largo']=$pasivos->largo_plazo;
+            $datos['total_pasivos']=$total;
+
+
 
             $boton = '<a href="#modalAddPasivo" class="modal-effect btn btn-oblong btn-warning" data-toggle="modal" data-effect="effect-slide-in-bottom">Editar</a>';
         }
-        else{
+        if($n==0){
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
@@ -368,7 +435,7 @@ class BalanceGralHistoricoController extends Controller
         }
         
         // Retorna en formato json
-        return response()->json(['tabla' => $tabla, 'boton' => $boton]);
+        return response()->json(['tabla' => $tabla, 'boton' => $boton,'datos' => $datos, 'total_pasivos'=>$total ]);
         
     }
 
@@ -392,12 +459,16 @@ class BalanceGralHistoricoController extends Controller
         }
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL V_pro_insert_pasivos(?,?,?)', array(
-            $request->pasivo_cor,
-            $request->pasivo_lar,
-            \Auth::user()->id_usuario
-        ));
+        $id_empresa=\Auth::user()->id_empresa;
+         
+        $datos= Pasivo::updateOrInsert(
+            ['id_empresa'=>$id_empresa],
 
+            ['corto_plazo'=>$request->pasivo_cor,
+            'largo_plazo'=>$request->pasivo_lar]
+        
+        );
+       
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!']);
     }
@@ -405,37 +476,42 @@ class BalanceGralHistoricoController extends Controller
     // Regresa una variable con la tabla de Capital Contable
     public function getCapitalContable(){
         // Hace la consulta y lo guarda en una variable
-        $capcon = \DB::select('CALL V_pro_select_capital_contable_id(?)', array(\Auth::user()->id_usuario));
-
+        $capcont = Capital_contable::where('id_empresa','=',\Auth::user()->id_empresa)->get();
         $tabla = '';
         $boton = '<a href="#modalAddCapCon" class="modal-effect btn btn-oblong btn-success" data-toggle="modal" data-effect="effect-slide-in-bottom">Agregar</a>';
-
+        $n=0;
+        $datos=array('capital_aportado'=> 0, 'capital_ganado' => 0);
+        $total_sum=0;
 
         // Revisa si la variable tiene contenido
-        if($capcon){
+        foreach($capcont as $capcon){
+            $total_sum=$capcon->capital_aportado+$capcon->capital_ganado+$capcon->exceso_insuficiencia;
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
                     <span>Capital Aportado</span>
-                    <span>$ '.$capcon[0]->capital_aportado_capital_contable.'</span>
+                    <span>$ '.number_format($capcon->capital_aportado,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Capital Ganado</span>
-                    <span>$ '.$capcon[0]->capital_ganado_capital_contable.'</span>
+                    <span>$ '.number_format($capcon->capital_ganado,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Exceso/Insufuciencia</span>
-                    <span '.($capcon[0]->exceso_insuficiencia_capital_contable < 0 ? 'class="tx-danger"' : '').'>$ '.$capcon[0]->exceso_insuficiencia_capital_contable.'</span>
+                    <span '.($capcon->exceso_insuficiencia < 0 ? 'class="tx-danger"' : '').'>$ '.number_format($capcon->exceso_insuficiencia,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span class="tx-bold">Total</span>
-                    <span class="tx-bold '.($capcon[0]->total_capital_contable < 0 ? 'tx-danger' : '').'">$ '.$capcon[0]->total_capital_contable.'</span>
+                    <span class="tx-bold '.($total_sum < 0 ? 'tx-danger' : '').'">$ '.number_format($total_sum,2).'</span>
                 </p>
             </div>';
 
             $boton = '<a href="#modalAddCapCon" class="modal-effect btn btn-oblong btn-warning" data-toggle="modal" data-effect="effect-slide-in-bottom">Editar</a>';
+            $datos['capital_aportado'] = $capcon->capital_aportado;
+            $datos['capital_ganado'] = $capcon->capital_ganado;
+            $n++;
         }
-        else{
+        if($n==0){
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
@@ -458,7 +534,7 @@ class BalanceGralHistoricoController extends Controller
         }
         
         // Retorna en formato json
-        return response()->json(['tabla' => $tabla, 'boton' => $boton]);
+        return response()->json(['tabla' => $tabla, 'boton' => $boton, 'datos'=>$datos]);
         
     }
 
@@ -468,7 +544,8 @@ class BalanceGralHistoricoController extends Controller
         // // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
             'capital_apor' => 'required',
-            'capital_gan' => 'required'
+            'capital_gan' => 'required'            
+
         );
 
         // // Se validan
@@ -482,14 +559,22 @@ class BalanceGralHistoricoController extends Controller
         }
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL V_pro_insert_capital_contable(?,?,?)', array(
-            $request->capital_apor,
-            $request->capital_gan,
-            \Auth::user()->id_usuario
-        ));
+        $id_empresa=\Auth::user()->id_empresa;
+
+        $total_exceso_insuficiencia=$request->total_activo-$request->total_pasivo-$request->capital_apor-$request->capital_gan;
+        
+        $datos = Capital_contable::updateOrInsert(
+            ['id_empresa'=>$id_empresa],
+
+            ['capital_aportado'=>$request->capital_apor,
+            'capital_ganado'=>$request->capital_gan,
+            'exceso_insuficiencia'=>$total_exceso_insuficiencia,
+            'id_empresa'=>$id_empresa]
+        
+        );
 
         // Y regresa mensaje de éxito
-        return response()->json(['success' => '¡Agregado con éxito!']);
+        return response()->json(['success' => '¡Agregado con éxito!','datos'=>$request]);
     }
 
 }

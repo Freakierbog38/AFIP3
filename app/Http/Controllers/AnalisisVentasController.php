@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Validator;
+//usar el modelo 
+use App\Mezcla_productos_servicio;
 use Illuminate\Http\Request;
 
 class AnalisisVentasController extends Controller
@@ -18,10 +20,12 @@ class AnalisisVentasController extends Controller
     // Regresa un array con los registros de Ventas de Productos o Servicios
     public function getVentasProdSer(){
         // Hace la consulta y lo guarda en una variable
-        $prodSer = \DB::select('CALL II_pro_select_productos_servicios_id(?)', array(\Auth::user()->id_usuario));
+        #$prodSer = \DB::select('CALL II_pro_select_productos_servicios_id(?)', array(\Auth::user()->id_usuario));
+        $prodSer = Mezcla_productos_servicio::where('id_empresa','=',\Auth::user()->id_empresa)->get();
 
         $totalUnidades = 0;
         $totalVentas = 0;
+        $ite = 0;
 
         // Variable que guarda la tabla a mostrar
         $tabla = '
@@ -42,28 +46,31 @@ class AnalisisVentasController extends Controller
             // Y se agregan a la tabla
             $tabla .= '
                 <tr>
-                    <td>'.$row->nombre_producto_servicio_mezcla_productos_servicios_1_anio.'</td>
-                    <td>'.$row->precio_u_producto_servicio_mezcla_productos_servicios_1_anio.' unidades</td>
-                    <td>$ '.$row->us_producto_servicio_mezcla_productos_servicios_1_anio.'</td>
-                    <td>$ '.$row->ventas_producto_servicio_mezcla_productos_servicios_1_anio.'</td>
-                    <td><button onclick="llenarFormularioEdit('.$row->id_producto_servicio_mezcla_productos_servicios_1_anio.')" class="modal-effect btn-oblong btn-warning edit-ProSer" data-toggle="modal" data-effect="effect-slide-in-bottom"><i class="icon ion-edit"></i></button></td>
-                    <td><button onclick="borrarProSer('.$row->id_producto_servicio_mezcla_productos_servicios_1_anio.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->nombre.'</td>
+                    <td>'.number_format($row->unidades_mes).' unidades</td>
+                    <td>$ '.number_format($row->precio,2).'</td>
+                    <td>$ '.number_format($row->ventas_mes,2).'</td>
+                    <td><button onclick="llenarFormularioEdit('.$row->id.')" class="modal-effect btn-oblong btn-warning edit-ProSer" data-toggle="modal" data-effect="effect-slide-in-bottom"><i class="icon ion-edit"></i></button></td>
+                    <td><button onclick="borrarProSer('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
-            $totalUnidades += $row->precio_u_producto_servicio_mezcla_productos_servicios_1_anio;
-            $totalVentas += $row->ventas_producto_servicio_mezcla_productos_servicios_1_anio;
+            $totalUnidades += $row->unidades_mes;
+            $totalVentas += $row->ventas_mes;
+            $ite++;
         }
+        
+        if($ite>0){
+            $totalPrecioUnit = round(($totalVentas / $totalUnidades),2);
 
-        $totalPrecioUnit = $totalVentas / $totalUnidades;
-
-        $tabla .= '<tr class="tx-bold bg-gray-900">
-                    <td>Total</td>
-                    <td>'.$totalUnidades.' unidades</td>
-                    <td>$ '.$totalPrecioUnit.'</td>
-                    <td>$ '.$totalVentas.'</td>
-                    <td></td>
-                    <td></td>
-                </tr>';
+            $tabla .= '<tr class="tx-bold bg-gray-900">
+                        <td>Total</td>
+                        <td>'.number_format($totalUnidades).' unidades</td>
+                        <td>$ '.number_format($totalPrecioUnit,2).'</td>
+                        <td>$ '.number_format($totalVentas,2).'</td>
+                        <td></td>
+                        <td></td>
+                    </tr>';
+        }
 
         // Etiquetas de cierre de la tabla   
         $tabla .='
@@ -91,14 +98,21 @@ class AnalisisVentasController extends Controller
         {
             return response()->json(['errors' => $error->errors()->all()]);
         }
-
-        \DB::select('CALL II_pro_insert_productos_servicios(?,?,?,?,?)', array(
+        $prodSer = new Mezcla_productos_servicio;
+        $prodSer->nombre=$request->ProductoServicio;
+        $prodSer->unidades_mes=$request->UnidadesMes;
+        $prodSer->precio=$request->PrecioUnitario;
+        $prodSer->ventas_mes=$request->mult;
+        $prodSer->id_empresa=\Auth::user()->id_empresa;
+        $prodSer->save();
+        
+        /*\DB::select('CALL II_pro_insert_productos_servicios(?,?,?,?,?)', array(
             $request->ProductoServicio,
             $request->UnidadesMes,
             $request->PrecioUnitario,
             $request->mult,
             \Auth::user()->id_usuario
-        ));
+        ));*/
 
         return response()->json(['success' => '¡Agregado con éxito!']);
     }
@@ -120,13 +134,20 @@ class AnalisisVentasController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
-        \DB::select('CALL II_pro_edit_producto_servicio(?,?,?,?,?)', array(
+        $prodSer = Mezcla_productos_servicio::find($request->editID);
+        $prodSer->nombre=$request->ProductoServicio;
+        $prodSer->unidades_mes=$request->UnidadesMes;
+        $prodSer->precio=$request->PrecioUnitario;
+        $prodSer->ventas_mes=$request->mult;
+        $prodSer->save();
+
+        /*\DB::select('CALL II_pro_edit_producto_servicio(?,?,?,?,?)', array(
             $request->editID,
             $request->ProductoServicio,
             $request->UnidadesMes,
             $request->PrecioUnitario,
             $request->mult
-        ));
+        ));*/
 
         return response()->json(['success' => '¡El registro ha sido modificado con éxito!']);
 
@@ -135,7 +156,9 @@ class AnalisisVentasController extends Controller
     // Función que elimina un registro de Ventas de Productos o Servicios
     public function eliminarVentasProSer($id, Request $request)
     {
-        $delete = \DB::select('CALL II_pro_delete_producto_servicio(?)', array($id));
+        $proSer = Mezcla_productos_servicio::find($id);
+        $proSer->delete();
+        //$delete = \DB::select('CALL II_pro_delete_producto_servicio(?)', array($id));
 
         $mensaje = 'El registro fue eliminado';
         
@@ -153,7 +176,7 @@ class AnalisisVentasController extends Controller
     // Función que devuelve el contenido de un registro de Producto o Servicio
     public function selectUnProSer($id, Request $request)
     {
-        $proSer = \DB::select('CALL II_pro_select_producto_servicio(?)', array($id));
+        $proSer = Mezcla_productos_servicio::where('id','=',$id)->get();
         
         if($request->ajax()){
             return \Response::json(array(
@@ -291,29 +314,34 @@ class AnalisisVentasController extends Controller
     
     // Regresa un array con los registros de Resultados
     public function getResultados(){
+        
         // Hace la consulta y lo guarda en una variable
-        $res = \DB::select('CALL II_pro_get_suma_valores_mezcla_productos_servicios_1_anio(?)', array(\Auth::user()->id_usuario));
+        //$res = \DB::select('CALL II_pro_get_suma_valores_mezcla_productos_servicios_1_anio(?)', array(\Auth::user()->id_usuario));
+        $sumaVentasMes = Mezcla_productos_servicio::where('id_empresa','=',\Auth::user()->id_empresa)->sum('ventas_mes')*12;
+        $sumaUnidadesMes = Mezcla_productos_servicio::where('id_empresa','=',\Auth::user()->id_empresa)->sum('unidades_mes')*12;
+        $precioPromedio = $sumaVentasMes/$sumaUnidadesMes;
 
+        
         // Se inicia la variable para guardar el contenido html por mostrar
         $tabla = '';
         // Luego con los datos obtenidos de la consulta se guardan en filas
-        foreach($res as $row){
+       
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
-                    <span>Unidades al Mes</span>
-                    <span>'.$row->us.' unidades</span>
+                    <span>Unidades al año</span>
+                    <span>'.number_format($sumaUnidadesMes).' unidades</span>
                 </p>
                 <p class="invoice-info-row">
-                    <span>Ventas al Mes</span>
-                    <span>$ '.$row->ven.'</span>
+                    <span>Ventas al año</span>
+                    <span>$ '.number_format($sumaVentasMes,2).'</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Precio Promedio</span>
-                    <span>$ '.$row->precio_promedio.'</span>
+                    <span>$ '.number_format($precioPromedio,2).'</span>
                 </p>
             </div>';
-        }
+        
         
         // Retorna la tabla
         return $tabla;

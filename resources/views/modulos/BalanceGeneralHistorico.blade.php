@@ -70,6 +70,8 @@
                 <div class="col mg-b-20">
                     <span id="botonCapCon"></span>
                 </div>
+               
+
                 <div class="table-wrapper" id="CapitalContable-Contenido" class="tx-center">
                     <img width="200" src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
                     <p>
@@ -193,12 +195,12 @@
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
-                                        <label class="tx-bold">Ingrese la monto del activo fijo:</label>
+                                        <label class="tx-bold">Ingrese el valor histórico del activo fijo:</label>
                                         <input type="number" id="monto_activo" name="monto_activo" class="form-control pd-y-12" min="0" step="0.01" placeholder="Ejemplo: 500.00" required>
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
-                                        <label class="tx-bold">Ingrese el valor en unidades:</label>
+                                        <label class="tx-bold">Ingrese la cantidad de unidades:</label>
                                         <input type="number" id="valor_un" name="valor_un" class="form-control pd-y-12" min="0" step="1" placeholder="Ejemplo: 10" required>
                                     </div><!-- form-group -->
 
@@ -360,7 +362,8 @@
                                         <label class="tx-bold">Capital Ganado:</label>
                                         <input type="number" id="capital_gan" name="capital_gan" class="form-control pd-y-12" min="0" step="0.01" placeholder="Ejemplo: 500.00" required>
                                     </div><!-- form-group -->
-
+                                    <input type="hidden" id="total_activo" name="total_activo">
+                                    <input type="hidden" id="total_pasivo" name="total_pasivo">
                                     <!-- <div class="form-group">
                                         <label class="tx-bold">Exceso/Insufuciencia:</label>
                                         <input type="number" id="exceso_ins" name="exceso_ins" class="form-control pd-y-12" min="0" step="0.01" placeholder="Ejemplo: 500.00" required>
@@ -384,7 +387,7 @@
 
 @section('scripts')
 <script>
-
+    
     // Trae en inserta en una etiqueta html la fecha del Balance General Historico
     function llenarFechaBalanace(){
 
@@ -393,7 +396,7 @@
             
             // Recibe la tabla formada en PHP y la integra en un div
             $("#FechaBalanceGral-contenido").html(response);
-
+            
         });
     }
 
@@ -406,6 +409,7 @@
             // Recibe la tabla formada en PHP y la integra en un div
             $("#Activos-Contenido").html(response.tabla);
             $("#botonActivos").html(response.boton);
+            document.getElementById('total_activo').value=response.datos['total_activos'];
 
         });
     }
@@ -417,7 +421,9 @@
         $.get("{{url('balanceGeneralHistorico/getDesgloseActivos')}}", {}, function(response){
             
             // Recibe la tabla formada en PHP y la integra en un div
-            $("#DesgloseActivos-Contenido").html(response);
+            $("#DesgloseActivos-Contenido").html(response.tabla);
+            llenarTablaActivos();
+            console.log('suma: '+response.total);
 
             $('#TablaDesgloseActivos').DataTable({
                 bLengthChange: false,
@@ -446,6 +452,9 @@
             // Recibe la tabla formada en PHP y la integra en un div
             $("#Pasivos-Contenido").html(response.tabla);
             $("#botonPasivos").html(response.boton);
+            document.getElementById('pasivo_cor').value=response.datos['corto'];
+            document.getElementById('pasivo_lar').value=response.datos['largo'];
+            document.getElementById('total_pasivo').value=response.datos['total_pasivos'];
 
             $('#TablaPasivos').DataTable({
                 bLengthChange: false,
@@ -474,6 +483,8 @@
             // Recibe la tabla formada en PHP y la integra en un div
             $("#CapitalContable-Contenido").html(response.tabla);
             $("#botonCapCon").html(response.boton);
+            document.getElementById('capital_apor').value=response.datos['capital_aportado'];
+            document.getElementById('capital_gan').value=response.datos['capital_ganado'];
 
             $('#TablaCapitalContable').DataTable({
                 bLengthChange: false,
@@ -694,7 +705,7 @@
                         $('#modalAddDesgloseActivo').modal('hide');
                         // Y vacia el formulario
                         $('#form-add-DesgloseActivo')[0].reset();
-
+                        console.log(data.valor);
                         // Muestra un modal de que la operación ha sido exitosa
                         bootbox.alert({
                             message: data.success,
@@ -831,6 +842,9 @@
                         // Recarga las tablas
                         llenarTablaPasivos();
                         llenarTablaCapitalContable();
+                        llenarTablaActivos();
+                        llenarTablaPasivos();
+                        
                         // Esconde el modal
                         $('#modalAddPasivo').modal('hide');
                         // Y vacia el formulario
@@ -876,11 +890,14 @@
                         }
                         html += '</div>';
                         $('#form-result-addCapCon').html(html);
+                        //console.log(data.datos);
                     }
 
                     if(data.success){
                         // Recarga las tablas
                         llenarTablaCapitalContable();
+                        //console.log(data.datos);
+                        
                         // Esconde el modal
                         $('#modalAddCapCon').modal('hide');
                         // Y vacia el formulario

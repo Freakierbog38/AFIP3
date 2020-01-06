@@ -23,7 +23,7 @@
 
                 <div class="col mg-b-20">
                     <h2>Con Apoyo</h2>
-                    <span id="botonIngresosCostosCA"></span>
+                    <span id="botonIngresosCostosCA1"></span>
                 </div>
                 <div class="col mg-b-20 tx-center" id="IngresosCostosCA-Contenido">
                     <img width="200" src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" />
@@ -32,7 +32,7 @@
                     </p>
                 </div>
 
-                <div class="col mg-b-20">
+                <!-- <div class="col mg-b-20">
                     <h2>Sin Apoyo</h2>
                     <span id="botonIngresosCostosSA"></span>
                 </div>
@@ -41,7 +41,7 @@
                     <p>
                         Cargando contenido
                     </p>
-                </div>
+                </div> -->
 
             </div><!-- tab-pane -->
             <div class="tab-pane" id="Politicas">
@@ -98,29 +98,29 @@
                                             <h3 class="tx-bold tx-center">Año 1</h3>
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de precios:</label>
-                                                <input type="number" id="Incremento_Pre" name="Incremento_Pre" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Pre" name="Incremento_Pre" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de unidades de ventas:</label>
-                                                <input type="number" id="Incremento_Uni" name="Incremento_Uni" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Uni" name="Incremento_Uni" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos fijos:</label>
-                                                <input type="number" id="Incremento_Cos_Fij" name="Incremento_Cos_Fij" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Fij" name="Incremento_Cos_Fij" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos variables:</label>
-                                                <input type="number" id="Incremento_Cos_Var" name="Incremento_Cos_Var" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Var" name="Incremento_Cos_Var" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
                                         </div>
                                         <div class="col-md-4 border-right">
                                             <h3 class="tx-bold tx-center">Año 2</h3>
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de precios:</label>
-                                                <input type="number" id="Incremento_Pre2" name="Incremento_Pre2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Pre2" name="Incremento_Pre2" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
@@ -130,36 +130,96 @@
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos fijos:</label>
-                                                <input type="number" id="Incremento_Cos_Fij2" name="Incremento_Cos_Fij2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Fij2" name="Incremento_Cos_Fij2" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos variables:</label>
-                                                <input type="number" id="Incremento_Cos_Var2" name="Incremento_Cos_Var2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Var2" name="Incremento_Cos_Var2" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
                                         </div>
                                         <div class="col-md-4">
                                             <h3 class="tx-bold tx-center">Año 3</h3>
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de precios:</label>
-                                                <input type="number" id="Incremento_Pre3" name="Incremento_Pre3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Pre3" name="Incremento_Pre3" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de unidades de ventas:</label>
-                                                <input type="number" id="Incremento_Uni3" name="Incremento_Uni3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Uni3" name="Incremento_Uni3" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos fijos:</label>
-                                                <input type="number" id="Incremento_Cos_Fij3" name="Incremento_Cos_Fij3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Fij3" name="Incremento_Cos_Fij3" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos variables:</label>
-                                                <input type="number" id="Incremento_Cos_Var3" name="Incremento_Cos_Var3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Var3" name="Incremento_Cos_Var3" class="form-control pd-y-12"  max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
                                         </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div><!-- pd-20 -->
+                    </div><!-- col-12 -->
+                </div><!-- row -->
+            </div><!-- modal-body -->
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->
+
+
+<div id="modalAddIngresosCostosCA1" class="modal fade">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content bd-0 bg-transparent rounded overflow-hidden">
+            <div class="modal-body pd-0">
+                <div class="modal-header">
+                    <h3 class="tx-gray-800 tx-normal mg-b-5">Agregar Ingresos y Costos con Apoyo</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-lg-12 bg-white">
+                        <div class="pd-xl-x-30">
+                            <div class="pd-x-30 pd-y-10">
+                                <span id="form-result-addIngresosCostosCA"></span>
+                                <form id="form-add-IngresosCostosCA">
+                                    @csrf
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h3 class="tx-bold tx-center">Agregar año</h3>
+                                            <div class="form-group">
+                                                <label class="tx-bold">Incremento en porciento de precios:</label>
+                                                <input type="number" id="Incremento_Pre" name="Incremento_Pre" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                            </div><!-- form-group -->
+
+                                            <div class="form-group">
+                                                <label class="tx-bold">Incremento en porciento de unidades de ventas:</label>
+                                                <input type="number" id="Incremento_Uni" name="Incremento_Uni" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                            </div><!-- form-group -->
+
+                                            <div class="form-group">
+                                                <label class="tx-bold">Incremento en porciento de costos fijos:</label>
+                                                <input type="number" id="Incremento_Cos_Fij" name="Incremento_Cos_Fij" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                            </div><!-- form-group -->
+
+                                            <div class="form-group">
+                                                <label class="tx-bold">Incremento en porciento de costos variables:</label>
+                                                <input type="number" id="Incremento_Cos_Var" name="Incremento_Cos_Var" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                            </div><!-- form-group -->
+                                        </div>
+                                     
+                                        
                                     </div>
 
                                     <div class="modal-footer">
@@ -182,7 +242,7 @@
         <div class="modal-content bd-0 bg-transparent rounded overflow-hidden">
             <div class="modal-body pd-0">
                 <div class="modal-header">
-                    <h3 class="tx-gray-800 tx-normal mg-b-5">Agregar Ingresos y Costos con Apoyo</h3>
+                    <h3 class="tx-gray-800 tx-normal mg-b-5">Agregar Ingresos y Costos sin Apoyo</h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -200,66 +260,66 @@
                                             <h3 class="tx-bold tx-center">Año 1</h3>
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de precios:</label>
-                                                <input type="number" id="Incremento_Pre" name="Incremento_Pre" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Pre" name="Incremento_Pre" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de unidades de ventas:</label>
-                                                <input type="number" id="Incremento_Uni" name="Incremento_Uni" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Uni" name="Incremento_Uni" class="form-control pd-y-12"  max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos fijos:</label>
-                                                <input type="number" id="Incremento_Cos_Fij" name="Incremento_Cos_Fij" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Fij" name="Incremento_Cos_Fij" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos variables:</label>
-                                                <input type="number" id="Incremento_Cos_Var" name="Incremento_Cos_Var" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Var" name="Incremento_Cos_Var" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
                                         </div>
                                         <div class="col-md-4 border-right">
                                             <h3 class="tx-bold tx-center">Año 2</h3>
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de precios:</label>
-                                                <input type="number" id="Incremento_Pre2" name="Incremento_Pre2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Pre2" name="Incremento_Pre2" class="form-control pd-y-12"  max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de unidades de ventas:</label>
-                                                <input type="number" id="Incremento_Uni2" name="Incremento_Uni2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Uni2" name="Incremento_Uni2" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos fijos:</label>
-                                                <input type="number" id="Incremento_Cos_Fij2" name="Incremento_Cos_Fij2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Fij2" name="Incremento_Cos_Fij2" class="form-control pd-y-12"  max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos variables:</label>
-                                                <input type="number" id="Incremento_Cos_Var2" name="Incremento_Cos_Var2" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Var2" name="Incremento_Cos_Var2" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
                                         </div>
                                         <div class="col-md-4">
                                             <h3 class="tx-bold tx-center">Año 3</h3>
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de precios:</label>
-                                                <input type="number" id="Incremento_Pre3" name="Incremento_Pre3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Pre3" name="Incremento_Pre3" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de unidades de ventas:</label>
-                                                <input type="number" id="Incremento_Uni3" name="Incremento_Uni3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Uni3" name="Incremento_Uni3" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos fijos:</label>
-                                                <input type="number" id="Incremento_Cos_Fij3" name="Incremento_Cos_Fij3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Fij3" name="Incremento_Cos_Fij3" class="form-control pd-y-12"  max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
 
                                             <div class="form-group">
                                                 <label class="tx-bold">Incremento en porciento de costos variables:</label>
-                                                <input type="number" id="Incremento_Cos_Var3" name="Incremento_Cos_Var3" class="form-control pd-y-12" min="0" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
+                                                <input type="number" id="Incremento_Cos_Var3" name="Incremento_Cos_Var3" class="form-control pd-y-12" max="1000" step="1" placeholder="Ingrese aqui el incremento" required>
                                             </div><!-- form-group -->
                                         </div>
                                     </div>
@@ -409,21 +469,22 @@
 
 @section('scripts')
 <script>
-
+    
     // Trae en inserta la tabla de Ingresos y Costos con Apoyo
     function llenarIngresosCostosCA(){
-
+        //$('#modalAddIngresosCostosCA').modal('show'); // abrir
+        
         // Petición GET a la url
         $.get("{{url('supuestosProyecciones/getIngresosCostosCA')}}", {}, function(response){
             
             // Recibe la tabla formada en PHP y la integra en un div
             $("#IngresosCostosCA-Contenido").html(response.tabla);
-            $("#botonIngresosCostosCA").html(response.boton);
+            $("#botonIngresosCostosCA1").html(response.boton);
 
             $('#TablaIngresosCostosCA').DataTable({
                 bLengthChange: false,
                 searching: false,
-                responsive: false,
+                responsive: true,
                 language: {
                     paginate : {
                         next: "Siguiente",
@@ -613,7 +674,7 @@
                         // Recarga las tablas
                         llenarIngresosCostosCA();
                         // Esconde el modal
-                        $('#modalAddIngresosCostosCA').modal('hide');
+                        $('#modalAddIngresosCostosCA1').modal('hide');
                         // Y vacia el formulario
                         $('#form-add-IngresosCostosCA')[0].reset();
 
@@ -848,7 +909,7 @@
         });
 
         llenarIngresosCostosCA();
-        llenarIngresosCostosSA();
+        // llenarIngresosCostosSA();
         llenarPoliticas();
         llenarMacroFina();
 

@@ -13,11 +13,11 @@
 <!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
 <div class="section-wrapper mg-t-20">
     <label class="section-title">Datos de la empresa</label>
-    
+    @if(isset($datosEmpresa[0]))
     <p> <span class="tx-bold">Nombre de la empresa:</span> <span class="tx-right">{{ $datosEmpresa[0]->nombre_empresa }}</span> </p>
     <p> <span class="tx-bold">Representante legal:</span> <span class="tx-right">{{ $datosEmpresa[0]->nombre_representante_legal . " " . $datosEmpresa[0]->paterno_representante_legal . " " . $datosEmpresa[0]->materno_representante_legal }}</span> </p>
     <p> <span class="tx-bold">Giro de la empresa:</span> <span class="tx-right">{{ $datosEmpresa[0]->giro_empresa }}</span> </p>
-    
+    @endif
 </div><!-- wrapper -->
 
 <!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -214,43 +214,43 @@
         <span>$ {{ $tablaResultHist[0]->ventas_netas_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Costo de Ventas</span>
+        <span>(-)Costo de Ventas</span>
         <span>$ {{ $tablaResultHist[0]->costo_ventas_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Utilidad Bruta</span>
+        <span>(=)Utilidad Bruta</span>
         <span>$ {{ $tablaResultHist[0]->utilidad_bruta_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Gastos de Operación</span>
+        <span>(-)Gastos de Operación</span>
         <span>$ {{ $tablaResultHist[0]->gastos_operacion_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>UAFIRDA</span>
+        <span>(=)UAFIRDA</span>
         <span>$ {{ $tablaResultHist[0]->uafirda_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Depreciación y Amortización</span>
+        <span>(-)Depreciación y Amortización</span>
         <span>$ {{ $tablaResultHist[0]->depreciacion_amortizacion_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>UAFIR</span>
+        <span>(=)UAFIR</span>
         <span>$ {{ $tablaResultHist[0]->uafir_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Gastor y Productos Financieros</span>
+        <span>(-)Gastos y Productos Financieros</span>
         <span>$ {{ $tablaResultHist[0]->gastos_prod_financieros_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>UAIR</span>
+        <span>(=)UAIR</span>
         <span>$ {{ $tablaResultHist[0]->uair_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Impuestos</span>
+        <span>(-)Impuestos</span>
         <span>$ {{ $tablaResultHist[0]->impuestos_cifras_pesos_nominales }}</span>
     </p>
     <p class="invoice-info-row">
-        <span>Utilidad Neta</span>
+        <span>(=)Utilidad Neta</span>
         <span>$ {{ $tablaResultHist[0]->utilidad_neta_cifras_pesos_nominales }}</span>
     </p>
 
@@ -273,12 +273,22 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalFinan = 0;
+            @endphp
             @foreach($tablaFinanProject as $dato)
             <tr>
                 <td>{{ $dato->fuente_financiamiento_proyecto }}</td>
                 <td>$ {{ $dato->monto_financiamiento_proyecto }}</td>
+                @php
+                    $totalFinan += $dato->monto_financiamiento_proyecto;
+                @endphp
             </tr>
             @endforeach
+            <tr class="tx-bold">
+                <td>Total</td>
+                <td>$ {{$totalFinan}}</td>
+            </tr>
         </tbody>
     </table>
     
@@ -363,9 +373,6 @@
                 <th>Gastos Financieros</th>
                 <th>ISR + PTU</th>
                 <th>Pagos de Capital por Financiamiento</th>
-                <th>Total Salidas</th>
-                <th>Flujo Neto de Efectivo</th>
-                <th>Flujo de Efectivo Acumulado</th>
             </tr>
         </thead>
         <tbody>
@@ -380,6 +387,24 @@
                     <td>{{ $dato->gastos_financieros_salidas_efectivo }}</td>
                     <td>{{ $dato->isr_ptu_salidas_efectivo }}</td>
                     <td>{{ $dato->pagos_capital_salidas_efectivo }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <br>
+    <table class="table table-bordered tx-center">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Total Salidas</th>
+                <th>Flujo Neto de Efectivo</th>
+                <th>Flujo de Efectivo Acumulado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tablaSalidasEfectivo as $dato)
+                <tr>
+                    <td>{{ $dato->mes_salidas_efectivo }}</td>
                     <td>{{ $dato->total_salidas_efectivo }}</td>
                     <td>{{ $dato->flujo_neto_salidas_efectivo }}</td>
                     <td>{{ $dato->flujo_efectivo_salidas_efectivo }}</td>
@@ -723,8 +748,10 @@
     <p>Después de evaluar el proyecto por indicadores que consideran el valor del dinero en el tiempo se obtuvieron los siguientes resultados.</p>
 
     <p class="invoice-info-row">
+        @if( isset($tablaValorPresenteNeto[0]) )
         <span>{{ $tablaValorPresenteNeto[0]->nombre_empresa }}</span>
         <span>$ {{ $tablaValorPresenteNeto[0]->vpn }}</span>
+        @endif
     </p>
 
 </div>

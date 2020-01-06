@@ -27,6 +27,23 @@
         
         <form action="{{url('registro')}}" method="post">
           @csrf
+
+          <h4>Datos de Usuario (Representante Legal)</h4>
+          <br>
+
+          <div class="form-group">
+            <label class="tx-bold">Nombre:</label>
+            <input type="text" name="nombre" class="form-control" placeholder="Ingrese su(s) nombre(s)" required>
+          </div>
+          <div class="form-group">
+            <label class="tx-bold">Apellido Paterno:</label>
+            <input type="text" name="apellido_paterno" class="form-control" placeholder="Ingrese su Apellido Paterno" required>
+          </div>
+          <div class="form-group">
+            <label class="tx-bold">Apellido Materno:</label>
+            <input type="text" name="apellido_materno" class="form-control" placeholder="Ingrese su Apellido Materno" required>
+          </div>
+
           <div class="form-group">
             <label class="tx-bold">Correo Electrónico:</label>
             <input type="email" name="correo" class="form-control" placeholder="Ingrese un Email" required>
@@ -42,9 +59,34 @@
             <input type="password" name="confirma" class="form-control mg-b-10" placeholder="Confirme la contraseña" required>
           </div>
 
-          <input type="hidden" name="id_rol" value="2">
+          <br>
+          <h4>Datos de la Empresa</h4>
+          <br>
 
-          <input type="hidden" name="estado" value="Activo">
+          <div class="form-group">
+            <label class="tx-bold">Nombre de la empresa:</label>
+            <input type="text" name="nombre_empresa" class="form-control mg-b-10" placeholder="Ingrese el nombre de la empresa" required>
+          </div>
+
+          <div class="form-group">
+            <label class="tx-bold">RFC:</label>
+            <input type="text" name="rfc" class="form-control mg-b-10" placeholder="Ingrese el RFC de la empresa" required>
+          </div>
+
+          <div class="form-group">
+            <label class="tx-bold">Teléfono:</label>
+            <input type="text" name="telefono" class="form-control mg-b-10" placeholder="Ingrese el teléfono de la empresa (10 dígitos)" required>
+          </div>
+
+          <div class="form-group">
+            <label class="tx-bold">Dirección:</label>
+            <input type="text" name="direccion" class="form-control mg-b-10" placeholder="Ingrese la dirección de la empresa" required>
+          </div>
+
+          <div class="form-group">
+            <label class="tx-bold">Giro:</label>
+            <input type="text" name="giro" class="form-control mg-b-10" placeholder="Ingrese el giro de la empresa" required>
+          </div>
 
           <button type="submit" class="btn btn-primary btn-block">Registrar</button>
         </form>

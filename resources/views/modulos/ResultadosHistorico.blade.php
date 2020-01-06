@@ -15,7 +15,7 @@
             <li class="nav-item">
                 <a class="nav-link active" href="#Nominas" data-toggle="tab">Cifras Nominales</a>
             </li>
-        </ul>
+        </ul> 
     </div><!-- card-header -->
     <div class="card-body">
         <div class="tab-content">
@@ -193,6 +193,7 @@
                     if(data.success){
                         // Recarga las tablas
                         llenarFechaResHist();
+                        llenarTablaNominas();
                         // Esconde el modal
                         $('#modalFechaResHist').modal('hide');
                         // Y vacia el formulario

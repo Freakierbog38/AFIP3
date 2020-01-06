@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Pasivos_actuales;
+use App\Capital_contable_actual;
+use App\Financiamiento_proyecto;
+use App\Destino_apoyo;
+use App\Desglose_apoyo_destino;
 
 class ApoyoSolicitadoController extends Controller
 {
@@ -19,7 +24,11 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Pasivos Actuales
     public function getPasivosActuales(){
         // Hace la consulta y lo guarda en una variable
-        $pasAct = \DB::select('CALL VIII_pro_select_pasivos_actuales_id(?)', array(\Auth::user()->id_usuario));
+        // $pasAct = \DB::select('CALL VIII_pro_select_pasivos_actuales_id(?)', array(\Auth::user()->id_usuario));
+        $pasAct = Pasivos_actuales::where(
+            ['id_empresa', \Auth::user()->id_empresa],
+            ['adicionales_proyecto', 0]
+        );
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -27,7 +36,6 @@ class ApoyoSolicitadoController extends Controller
             <table id="TablaPasivosActuales" class="table display responsive nowrap">
                 <thead>
                     <tr class="tx-center">
-                        <th>No.</th>
                         <th>Clave</th>
                         <th>Tipo de<br> Financiamiento</th>
                         <th>Monto de<br> Financiamiento</th>
@@ -44,16 +52,15 @@ class ApoyoSolicitadoController extends Controller
         foreach($pasAct as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->num_pasivo_actual.'</td>
-                    <td>'.$row->clave_pasivos_actuales.'</td>
-                    <td>'.$row->tipo_financiamiento_pasivos_actuales.'</td>
-                    <td>$ '.$row->monto_pasivos_actuales.'</td>
-                    <td>'.$row->tipo_tasa_pasivos_actuales.'</td>
-                    <td>'.$row->interes_pasivos_actuales.' %</td>
-                    <td>'.$row->plazo_pasivos_actuales.' '.($row->plazo_pasivos_actuales > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.$row->gracia_pasivos_actuales.' '.($row->gracia_pasivos_actuales > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.$row->pagos_pasivos_actuales.' '.($row->pagos_pasivos_actuales > 1 ? 'meses' : 'mes').'</td>
-                    <td><button onclick="borrarPasivoActual('.$row->id_pasivos_actuales.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->clave.'</td>
+                    <td>'.$row->tipo.'</td>
+                    <td>$ '.number_format($row->monto,2).'</td>
+                    <td>'.$row->tipo_tasa.'</td>
+                    <td>'.number_format($row->interes,2).' %</td>
+                    <td>'.number_format($row->plazo,2).' '.($row->plazo > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->gracia,2).' '.($row->gracia > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->pagos,2).' '.($row->pagos > 1 ? 'meses' : 'mes').'</td>
+                    <td><button onclick="borrarPasivoActual('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
         }
@@ -74,8 +81,6 @@ class ApoyoSolicitadoController extends Controller
     // Agrega los registros de Pasivos Actuales
     public function addPasivosActuales(Request $request)
     {
-        if($request->tipo_tas != "Fijo" && $request->tipo_tas != "Variable")
-            $request->tipo_tas = NULL;
 
         // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
@@ -102,17 +107,18 @@ class ApoyoSolicitadoController extends Controller
         $pagos = $request->plazo - $request->gracia;
 
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_pasivos_actuales(?,?,?,?,?,?,?,?,?)', array(
-            $request->clave,
-            $request->tipo_fin,
-            $request->monto,
-            $request->tipo_tas,
-            $request->interes,
-            $request->plazo,
-            $request->gracia,
-            $pagos,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Pasivos_actuales;
+        $datos->clave = $request->clave;
+        $datos->tipo = $request->tipo_fin;
+        $datos->monto = $request->monto;
+        $datos->tipo_tasa = $request->tipo_tas;
+        $datos->interes = $request->interes;
+        $datos->plazo = $request->plazo;
+        $datos->gracia = $request->gracia;
+        $datos->pagos = $pagos;
+        $datos->adicionales_proyecto = 0;
+        $datos->id_empresa = \Auth::user()->id_empresa;
+        $datos->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -121,7 +127,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Pasivos Actuales
     public function deletePasivosActuales($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_pasivo_actual(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_pasivo_actual(?)', array($id));
+        $delete = Pasivos_actuales::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -143,7 +151,11 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Pasivos Adicionales en el Desarrollo
     public function getPasivosDesarollo(){
         // Hace la consulta y lo guarda en una variable
-        $pasDes = \DB::select('CALL VIII_pro_select_pasivos_adicionales_id(?)', array(\Auth::user()->id_usuario));
+        // $pasDes = \DB::select('CALL VIII_pro_select_pasivos_adicionales_id(?)', array(\Auth::user()->id_usuario));
+        $pasDes = Pasivos_actuales::where(
+            ['id_empresa', \Auth::user()->id_empresa],
+            ['adicionales_proyecto', 1]
+        );
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -151,7 +163,6 @@ class ApoyoSolicitadoController extends Controller
             <table id="TablaPasivosDes" class="table display responsive nowrap">
                 <thead>
                     <tr class="tx-center">
-                        <th>No.</th>
                         <th>Clave</th>
                         <th>Tipo de<br> Financiamiento</th>
                         <th>Monto de<br> Financiamiento</th>
@@ -168,16 +179,15 @@ class ApoyoSolicitadoController extends Controller
         foreach($pasDes as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->num_pasivo_adicional.'</td>
-                    <td>'.$row->clave_pasivos_adicionales.'</td>
+                    <td>'.$row->clave.'</td>
                     <td>'.$row->tipo_financiamiento_pasivos_adicionales.'</td>
-                    <td>$ '.$row->monto_pasivos_adicionales.'</td>
-                    <td>'.$row->tipo_tasa_pasivos_adicionales.'</td>
-                    <td>'.$row->interes_pasivos_adicionales.' %</td>
-                    <td>'.$row->plazo_pasivos_adicionales.' '.($row->plazo_pasivos_adicionales > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.$row->gracia_pasivos_adicionales.' '.($row->gracia_pasivos_adicionales > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.$row->pagos_pasivos_adicionales.' '.($row->pagos_pasivos_adicionales > 1 ? 'meses' : 'mes').'</td>
-                    <td><button onclick="borrarPasivoDesarrollo('.$row->id_pasivos_adicionales.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>$ '.number_format($row->monto,2).'</td>
+                    <td>'.$row->tipo_tasa.'</td>
+                    <td>'.number_format($row->interes,2).' %</td>
+                    <td>'.number_format($row->plazo,2).' '.($row->plazo > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->gracia,2).' '.($row->gracia > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->pagos,2).' '.($row->pagos > 1 ? 'meses' : 'mes').'</td>
+                    <td><button onclick="borrarPasivoDesarrollo('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
         }
@@ -224,17 +234,18 @@ class ApoyoSolicitadoController extends Controller
         $pagos = $request->plazo - $request->gracia;
 
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_pasivos_adicionales(?,?,?,?,?,?,?,?,?)', array(
-            $request->clave,
-            $request->tipo_fin,
-            $request->monto,
-            $request->tipo_tas,
-            $request->interes,
-            $request->plazo,
-            $request->gracia,
-            $pagos,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Pasivos_actuales;
+        $datos->clave = $request->clave;
+        $datos->tipo = $request->tipo_fin;
+        $datos->monto = $request->monto;
+        $datos->tipo_tasa = $request->tipo_tas;
+        $datos->interes = $request->interes;
+        $datos->plazo = $request->plazo;
+        $datos->gracia = $request->gracia;
+        $datos->pagos = $pagos;
+        $datos->adicionales_proyecto = 1;
+        $datos->id_empresa = \Auth::user()->id_empresa;
+        $datos->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -243,7 +254,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Pasivos Adicionales en el Desarrollo
     public function deletePasivosDesarollo($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_pasivo_adicional(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_pasivo_adicional(?)', array($id));
+        $delete = Pasivos_actuales::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -265,7 +278,11 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Capital Contable Actual
     public function getCapitalActual(){
         // Hace la consulta y lo guarda en una variable
-        $capAct = \DB::select('CALL VIII_pro_select_capital_contable_actual_id(?)', array(\Auth::user()->id_usuario));
+        // $capAct = \DB::select('CALL VIII_pro_select_capital_contable_actual_id(?)', array(\Auth::user()->id_usuario));
+        $capAct = Capital_contable_actual::where(
+            ['id_empresa', \Auth::user()->id_empresa],
+            ['adiciona_proyecto', 0]
+        );
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -283,9 +300,9 @@ class ApoyoSolicitadoController extends Controller
         foreach($capAct as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->descripcion_capital_contable_actual.'</td>
-                    <td>$ '.$row->monto_capital_contable_actual.'</td>
-                    <td><button onclick="borrarCapitalActual('.$row->id_capital_contable_actual.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->descripcion.'</td>
+                    <td>$ '.number_format($row->monto,2).'</td>
+                    <td><button onclick="borrarCapitalActual('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
         }
@@ -323,11 +340,11 @@ class ApoyoSolicitadoController extends Controller
         }
 
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_capital_contable_actual(?,?,?)', array(
-            $request->descripcion_cap,
-            $request->monto,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Capital_contable_actual;
+        $datos->descripcion = $request->descripcion_cap;
+        $datos->monto = $request->monto;
+        $datos->adiciona_proyecto = 0;
+        $datos->id_empresa = \Auth::user()->id_usuario;
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -336,7 +353,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Capital Contable Actual
     public function deleteCapitalActual($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_capital_contable_actual(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_capital_contable_actual(?)', array($id));
+        $delete = Capital_contable_actual::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -358,7 +377,11 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Capital Adicional de Desarrollo
     public function getCapitalDesarrollo(){
         // Hace la consulta y lo guarda en una variable
-        $capDes = \DB::select('CALL VIII_pro_select_capital_contable_adicional_id(?)', array(\Auth::user()->id_usuario));
+        // $capDes = \DB::select('CALL VIII_pro_select_capital_contable_adicional_id(?)', array(\Auth::user()->id_usuario));
+        $capDes = Capital_contable_actual::where(
+            ['id_empresa', \Auth::user()->id_empresa],
+            ['adiciona_proyecto', 1]
+        );
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -376,9 +399,9 @@ class ApoyoSolicitadoController extends Controller
         foreach($capDes as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->descripcion_capital_contable_adicional.'</td>
-                    <td>$ '.$row->monto_capital_contable_adicional.'</td>
-                    <td><button onclick="borrarCapitalDesarrollo('.$row->id_capital_contable_adicional.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->descripcion.'</td>
+                    <td>$ '.number_format($row->monto,2).'</td>
+                    <td><button onclick="borrarCapitalDesarrollo('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
         }
@@ -416,11 +439,11 @@ class ApoyoSolicitadoController extends Controller
         }
 
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_capital_contable_adicional(?,?,?)', array(
-            $request->descripcion_cap,
-            $request->monto,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Capital_contable_actual;
+        $datos->descripcion = $request->descripcion_cap;
+        $datos->monto = $request->monto;
+        $datos->adiciona_proyecto = 1;
+        $datos->id_empresa = \Auth::user()->id_usuario;
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -429,7 +452,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Capital Adicional de Desarrollo
     public function deleteCapitalDesarrollo($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_capital_contable_adicional(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_capital_contable_adicional(?)', array($id));
+        $delete = Capital_contable_actual::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -451,7 +476,8 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Financiamiento
     public function getFinanciamiento(){
         // Hace la consulta y lo guarda en una variable
-        $fuentes_fin = \DB::select('CALL VIII_pro_select_fuente_financiamiento_id(?)', array(\Auth::user()->id_usuario));
+        // $fuentes_fin = \DB::select('CALL VIII_pro_select_fuente_financiamiento_id(?)', array(\Auth::user()->id_usuario));
+        $fuentes_fin = Financiamiento_proyecto::where('id_empresa', \Auth::user()->id_empresa);
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -469,9 +495,9 @@ class ApoyoSolicitadoController extends Controller
         foreach($fuentes_fin as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->fuente_financiamiento_proyecto.'</td>
-                    <td>$ '.$row->monto_financiamiento_proyecto.'</td>
-                    <td><button onclick="borrarFinanciamiento('.$row->id_financiamiento_proyecto.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->fuente.'</td>
+                    <td>$ '.$row->monto.'</td>
+                    <td><button onclick="borrarFinanciamiento('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
         }
@@ -509,11 +535,11 @@ class ApoyoSolicitadoController extends Controller
         }
 
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_fuente_financiamiento(?,?,?)', array(
-            $request->fuente_fin,
-            $request->monto,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Financiamiento_proyecto;
+        $datos->fuente = $request->fuente_fin;
+        $datos->monto = $request->monto;
+        $datos->id_empresa = \Auth::user()->id_empresa;
+        $delete->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -522,7 +548,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Financiamiento
     public function deleteFinanciamiento($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_fuente_financiamiento(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_fuente_financiamiento(?)', array($id));
+        $delete = Financiamiento_proyecto::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -544,8 +572,11 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Destino de las inversiones
     public function getInversiones(){
         // Hace la consulta y lo guarda en una variable
-        $inversiones = \DB::select('CALL VIII_pro_select_destino_inversiones_id(?)', array(\Auth::user()->id_usuario));
+        // $inversiones = \DB::select('CALL VIII_pro_select_destino_inversiones_id(?)', array(\Auth::user()->id_usuario));
+        $inversiones = Destino_apoyo::where('id_empresa', \Auth::user()->id_empresa);
 
+        $ite = 0;
+        $montoTotal = 0;
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
         $tabla = '
@@ -563,10 +594,22 @@ class ApoyoSolicitadoController extends Controller
         foreach($inversiones as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->destinos_inversiones_destino_recursos.'</td>
-                    <td>$ '.$row->monto_destino_recursos.'</td>
-                    <td>'.$row->tipo_activo_destino_recursos.'</td>
-                    <td><button onclick="borrarInversiones('.$row->id_destino_recursos.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->destino.'</td>
+                    <td>$ '.$row->monto.'</td>
+                    <td><button onclick="borrarInversiones('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                </tr>
+            ';
+            $montoTotal += $row->monto;
+            $ite++;
+        }
+
+        if($ite>0){
+            $tabla .= '
+                <tr class="tx-center tx-bold">
+                    <td>Total</td>
+                    <td>$ '.$montoTotal.'</td>
+                    <td> </td>
+                    <td> </td>
                 </tr>
             ';
         }
@@ -644,7 +687,8 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una tabla creada con HTML de Destino de las inversiones
     public function getDesgloseInversiones(){
         // Hace la consulta y lo guarda en una variable
-        $inversionesDes = \DB::select('CALL VIII_pro_select_desgloces_inversiones_id(?)', array(\Auth::user()->id_usuario));
+        // $inversionesDes = \DB::select('CALL VIII_pro_select_desgloces_inversiones_id(?)', array(\Auth::user()->id_usuario));
+        $inversionesDes = Desglose_apoyo_destino::where('id_empresa', \Auth::user()->id_empresa);
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -665,12 +709,12 @@ class ApoyoSolicitadoController extends Controller
         foreach($inversionesDes as $row){
             $tabla .= '
                 <tr class="tx-center">
-                    <td>'.$row->concepto_desgloce_inversiones.'</td>
-                    <td>$ '.$row->inversion_desgloce_inversiones.'</td>
-                    <td>'.$row->vida_util_desgloce_inversiones.' '.($row->vida_util_desgloce_inversiones > 1 ? 'años' : 'año').'</td>
-                    <td>'.$row->depreciacion_porcentaje_desgloce_inversiones.' %</td>
-                    <td>$ '.$row->depreciacion_moneda_desgloce_inversiones.'</td>
-                    <td><button onclick="borrarInversionesDesglose('.$row->id_desgloce_inversiones.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
+                    <td>'.$row->concepto.'</td>
+                    <td>$ '.$row->inversion.'</td>
+                    <td>'.$row->vida_util.' '.($row->vida_util > 1 ? 'años' : 'año').'</td>
+                    <td>'.(1 / $row->depreciacion).' %</td>
+                    <td>$ '.$row->depreciacion.'</td>
+                    <td><button onclick="borrarInversionesDesglose('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
         }
@@ -783,7 +827,7 @@ class ApoyoSolicitadoController extends Controller
             <div class="col-md">
             <p class="invoice-info-row">
                 <span>Incremento de capacidad de activos</span>
-                <span>N/A</span>
+                <span>N/A%</span>
             </p>
             <p class="invoice-info-row">
                 <span>Capacidad máxima de unidades</span>

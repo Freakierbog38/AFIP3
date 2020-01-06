@@ -27,7 +27,7 @@
     <div class="slim-header">
       <div class="container">
         <div class="slim-header-left">
-          <h2 class="slim-logo"><a href="{{ url('/principal') }}"><img src="{{ asset('img/RED3.png') }}" class="img-fluid"></a></h2>
+          <h2 class="slim-logo"><a href="{{ url('/') }}"><img src="{{ asset('img/RED3.png') }}" class="img-fluid"></a></h2>
         </div><!-- slim-header-left -->
         <div class="slim-header-right">
           <div class="dropdown dropdown-c">
@@ -58,6 +58,16 @@
     <div class="slim-mainpanel">
       <div class="container">
         
+      <!-- <div class="col-md mg-t-20 mg-md-t-10">
+        <div class="card bg-primary tx-white bd-0">
+          <div class="card-body bg-warning">
+            <h5 class="card-title tx-white tx-medium mg-b-10">Información de Empresa</h5>
+            <p class="card-text">Ingrese al enlace de abajo para ingresar la información de su empresa y terminar con el registro</p>
+            <a href="{{ url('/formEmpresa') }}" class="card-link tx-white-7 hover-white">Click aquí</a>
+          </div>
+        </div>
+      </div> -->
+
         @yield('contenido')
 
       </div><!-- container -->

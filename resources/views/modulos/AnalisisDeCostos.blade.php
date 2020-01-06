@@ -11,9 +11,10 @@
             <li class="nav-item">
                 <a class="nav-link" href="#CostosVariablesUnit" data-toggle="tab">Costos Variables Unitarios</a>
             </li>
-            <li class="nav-item">
+            <!--<li class="nav-item">
                 <a class="nav-link" href="#CVUTotal" data-toggle="tab">Costos Variable Unitario Total</a>
             </li>
+            -->
         </ul>
     </div><!-- card-header -->
     <div class="card-body">
@@ -138,7 +139,7 @@
 
                                     <div class="form-group">
                                         <label class="tx-bold">Ingrese el monto mensual en pesos mexicanos:</label>
-                                        <input type="number" id="editmonto_mensual" name="monto_mensual" class="form-control pd-y-12" placeholder="Ejemplo: $ 20000.00" min="0" step="0.1" required>
+                                        <input type="number" id="editmonto_mensual" name="monto_mensual" class="form-control pd-y-12" placeholder="Ejemplo: $ 20000.00" min="0" step="0.1" required max="2147483647" >
                                     </div><!-- form-group -->
 
                                     <input type="hidden" id="idCostoFijoMes" name="idCostoFijoMes" value="">
@@ -281,6 +282,7 @@
                     emptyTable: "No hay datos en esta tabla.",
                     info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                     infoEmpty: "Mostrando 0 de 0 entradas",
+                    //search: "Buscar",
                 }
             });
 
@@ -335,9 +337,9 @@
         // Petición GET a la url
         $.get(enlace, {}, function(response){
             // Se rellenan los input con los valores traidos de la bd
-            $('#editcfmName').val(response.CFM[0].concepto_CFM);
-            $('#editmonto_mensual').val(response.CFM[0].CFM);
-            $('#idCostoFijoMes').val(response.CFM[0].id_CFM);
+            $('#editcfmName').val(response.CFM[0].concepto);
+            $('#editmonto_mensual').val(response.CFM[0].monto_mensual);
+            $('#idCostoFijoMes').val(response.CFM[0].id);
         });
 
         $('#FormCostoFijoMes-Edit').modal("show");
