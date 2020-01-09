@@ -17,9 +17,9 @@ class CreateDesgloseActivosTable extends Migration
             $table->bigIncrements('id');
             $table->string('concepto');
             $table->integer('cantidad');
-            $table->float('valor_historico',11,2);
-            $table->float('total',11,2);
-            $table->float('depreciacion',11,2);
+            $table->float('valor_historico',11,3);
+            $table->float('total',11,3);
+            $table->float('depreciacion',11,3);
             $table->integer('anios_restantes');
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');

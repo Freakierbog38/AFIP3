@@ -423,7 +423,7 @@
             // Recibe la tabla formada en PHP y la integra en un div
             $("#DesgloseActivos-Contenido").html(response.tabla);
             llenarTablaActivos();
-            console.log('suma: '+response.total);
+            // console.log('suma: '+response.total);
 
             $('#TablaDesgloseActivos').DataTable({
                 bLengthChange: false,
@@ -513,12 +513,12 @@
         // Petición GET a la url
         $.get(enlace, {}, function(response){
             // Se rellenan los input con los valores traidos de la bd
-            $('#editactivo_fijo').val(response.AD[0].activos_fijos_aportados_desgloce_activos_fijos_aportados);
-            $('#editmonto_activo').val(response.AD[0].cantidad_desgloce_activos_fijos_aportados);
-            $('#editvalor_un').val(response.AD[0].valor_unidades_desgloce_activos_fijos_aportados);
-            $('#editdepreciacion').val(response.AD[0].depreciacion_desgloce_activos_fijos_aportados);
-            $('#editanios_restantes').val(response.AD[0].anios_restantes_desgloce_activos_fijos_aportados);
-            $('#id').val(response.AD[0].id_desgloce_activos);
+            $('#editactivo_fijo').val(response.AD.concepto);
+            $('#editmonto_activo').val(response.AD.valor_historico);
+            $('#editvalor_un').val(response.AD.cantidad);
+            $('#editdepreciacion').val(response.AD.depreciacion);
+            $('#editanios_restantes').val(response.AD.anios_restantes);
+            $('#id').val(response.AD.id);
         });
 
         $('#modalEditDesgloseActivo').modal("show");

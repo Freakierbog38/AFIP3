@@ -8,6 +8,10 @@ use App\Capital_contable_actual;
 use App\Financiamiento_proyecto;
 use App\Destino_apoyo;
 use App\Desglose_apoyo_destino;
+use App\Capacidad_nueva;
+use App\Mezcla_productos_servicio;
+use App\Capacidad_instalada;
+
 
 class ApoyoSolicitadoController extends Controller
 {
@@ -25,10 +29,10 @@ class ApoyoSolicitadoController extends Controller
     public function getPasivosActuales(){
         // Hace la consulta y lo guarda en una variable
         // $pasAct = \DB::select('CALL VIII_pro_select_pasivos_actuales_id(?)', array(\Auth::user()->id_usuario));
-        $pasAct = Pasivos_actuales::where(
+        $pasAct = Pasivos_actuales::where([
             ['id_empresa', \Auth::user()->id_empresa],
             ['adicionales_proyecto', 0]
-        );
+        ])->get();
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -57,9 +61,9 @@ class ApoyoSolicitadoController extends Controller
                     <td>$ '.number_format($row->monto,2).'</td>
                     <td>'.$row->tipo_tasa.'</td>
                     <td>'.number_format($row->interes,2).' %</td>
-                    <td>'.number_format($row->plazo,2).' '.($row->plazo > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.number_format($row->gracia,2).' '.($row->gracia > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.number_format($row->pagos,2).' '.($row->pagos > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->plazo).' '.($row->plazo > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->gracia).' '.($row->gracia > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->pagos).' '.($row->pagos > 1 ? 'meses' : 'mes').'</td>
                     <td><button onclick="borrarPasivoActual('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
@@ -74,7 +78,8 @@ class ApoyoSolicitadoController extends Controller
         // return $tabla;
 
         return response()->json([
-            'tabla' => $tabla
+            'tabla' => $tabla,
+            'respuesta' => $pasAct
         ]);
     }
 
@@ -152,10 +157,10 @@ class ApoyoSolicitadoController extends Controller
     public function getPasivosDesarollo(){
         // Hace la consulta y lo guarda en una variable
         // $pasDes = \DB::select('CALL VIII_pro_select_pasivos_adicionales_id(?)', array(\Auth::user()->id_usuario));
-        $pasDes = Pasivos_actuales::where(
+        $pasDes = Pasivos_actuales::where([
             ['id_empresa', \Auth::user()->id_empresa],
             ['adicionales_proyecto', 1]
-        );
+        ])->get();
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -180,13 +185,13 @@ class ApoyoSolicitadoController extends Controller
             $tabla .= '
                 <tr class="tx-center">
                     <td>'.$row->clave.'</td>
-                    <td>'.$row->tipo_financiamiento_pasivos_adicionales.'</td>
+                    <td>'.$row->tipo.'</td>
                     <td>$ '.number_format($row->monto,2).'</td>
                     <td>'.$row->tipo_tasa.'</td>
                     <td>'.number_format($row->interes,2).' %</td>
-                    <td>'.number_format($row->plazo,2).' '.($row->plazo > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.number_format($row->gracia,2).' '.($row->gracia > 1 ? 'meses' : 'mes').'</td>
-                    <td>'.number_format($row->pagos,2).' '.($row->pagos > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->plazo).' '.($row->plazo > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->gracia).' '.($row->gracia > 1 ? 'meses' : 'mes').'</td>
+                    <td>'.number_format($row->pagos).' '.($row->pagos > 1 ? 'meses' : 'mes').'</td>
                     <td><button onclick="borrarPasivoDesarrollo('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
@@ -279,10 +284,10 @@ class ApoyoSolicitadoController extends Controller
     public function getCapitalActual(){
         // Hace la consulta y lo guarda en una variable
         // $capAct = \DB::select('CALL VIII_pro_select_capital_contable_actual_id(?)', array(\Auth::user()->id_usuario));
-        $capAct = Capital_contable_actual::where(
+        $capAct = Capital_contable_actual::where([
             ['id_empresa', \Auth::user()->id_empresa],
             ['adiciona_proyecto', 0]
-        );
+        ])->get();
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -344,7 +349,8 @@ class ApoyoSolicitadoController extends Controller
         $datos->descripcion = $request->descripcion_cap;
         $datos->monto = $request->monto;
         $datos->adiciona_proyecto = 0;
-        $datos->id_empresa = \Auth::user()->id_usuario;
+        $datos->id_empresa = \Auth::user()->id_empresa;
+        $datos->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -378,10 +384,10 @@ class ApoyoSolicitadoController extends Controller
     public function getCapitalDesarrollo(){
         // Hace la consulta y lo guarda en una variable
         // $capDes = \DB::select('CALL VIII_pro_select_capital_contable_adicional_id(?)', array(\Auth::user()->id_usuario));
-        $capDes = Capital_contable_actual::where(
+        $capDes = Capital_contable_actual::where([
             ['id_empresa', \Auth::user()->id_empresa],
             ['adiciona_proyecto', 1]
-        );
+        ])->get();
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -443,7 +449,8 @@ class ApoyoSolicitadoController extends Controller
         $datos->descripcion = $request->descripcion_cap;
         $datos->monto = $request->monto;
         $datos->adiciona_proyecto = 1;
-        $datos->id_empresa = \Auth::user()->id_usuario;
+        $datos->id_empresa = \Auth::user()->id_empresa;
+        $datos->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -477,7 +484,7 @@ class ApoyoSolicitadoController extends Controller
     public function getFinanciamiento(){
         // Hace la consulta y lo guarda en una variable
         // $fuentes_fin = \DB::select('CALL VIII_pro_select_fuente_financiamiento_id(?)', array(\Auth::user()->id_usuario));
-        $fuentes_fin = Financiamiento_proyecto::where('id_empresa', \Auth::user()->id_empresa);
+        $fuentes_fin = Financiamiento_proyecto::where('id_empresa', \Auth::user()->id_empresa)->get();
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -496,7 +503,7 @@ class ApoyoSolicitadoController extends Controller
             $tabla .= '
                 <tr class="tx-center">
                     <td>'.$row->fuente.'</td>
-                    <td>$ '.$row->monto.'</td>
+                    <td>$ '.number_format($row->monto,2).'</td>
                     <td><button onclick="borrarFinanciamiento('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
@@ -539,7 +546,7 @@ class ApoyoSolicitadoController extends Controller
         $datos->fuente = $request->fuente_fin;
         $datos->monto = $request->monto;
         $datos->id_empresa = \Auth::user()->id_empresa;
-        $delete->save();
+        $datos->save();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -573,51 +580,62 @@ class ApoyoSolicitadoController extends Controller
     public function getInversiones(){
         // Hace la consulta y lo guarda en una variable
         // $inversiones = \DB::select('CALL VIII_pro_select_destino_inversiones_id(?)', array(\Auth::user()->id_usuario));
-        $inversiones = Destino_apoyo::where('id_empresa', \Auth::user()->id_empresa);
+        $inversiones = Destino_apoyo::where('id_empresa', \Auth::user()->id_empresa)->get();
 
-        $ite = 0;
-        $montoTotal = 0;
-        // La estructura del datatable se guarda en una variable
-        // Primero las cabeceras
-        $tabla = '
-            <table id="TablaInversiones" class="table display responsive nowrap">
-                <thead>
-                    <tr class="tx-center">
-                        <th>Concepto</th>
-                        <th>Monto</th>
-                        <th>Tipo de Activo</th>
-                        <th></th>
-                    </tr>
-                </thead>
-            <tbody>';
-        // Luego con los datos obtenidos de la consulta se guardan en filas
-        foreach($inversiones as $row){
+        $tabla = '';
+        $boton = '<a href="#modalAddCapitalAct" class="modal-effect btn btn-oblong btn-success" data-toggle="modal" data-effect="effect-slide-in-bottom">Agregar</a>';
+        $total=0;
+        $n=0;
+        $datosReturn=array('total_activos'=>0);
+        // Revisa si la variable tiene contenido
+        foreach($inversiones as $inversion){
+            $total = $inversion->circulante + $inversion->fijo + $inversion->diferido;
             $tabla .= '
-                <tr class="tx-center">
-                    <td>'.$row->destino.'</td>
-                    <td>$ '.$row->monto.'</td>
-                    <td><button onclick="borrarInversiones('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
-                </tr>
-            ';
-            $montoTotal += $row->monto;
-            $ite++;
-        }
+            <div class="col-md">
+                <p class="invoice-info-row">
+                    <span>Circulante</span>
+                    <span>$ '.number_format($inversion->circulante,2).'</span>
+                </p>
+                <p class="invoice-info-row">
+                    <span>Fijo</span>
+                    <span>$ '.number_format($inversion->fijo,2).'</span>
+                </p>
+                <p class="invoice-info-row">
+                    <span>Diferido</span>
+                    <span>$ '.number_format($inversion->diferido,2).'</span>
+                </p>
+                <p class="invoice-info-row">
+                    <span class="tx-bold">Total</span>
+                    <span class="tx-bold">$ '.number_format($total,2).'</span>
+                </p>
+            </div>';
 
-        if($ite>0){
+            $boton = '<a href="#modalAddCapitalAct" class="modal-effect btn btn-oblong btn-warning" data-toggle="modal" data-effect="effect-slide-in-bottom">Editar</a>';
+            $n++;
+            $datosReturn['total_activos']=$total;
+        }
+        
+        if($n==0){
             $tabla .= '
-                <tr class="tx-center tx-bold">
-                    <td>Total</td>
-                    <td>$ '.$montoTotal.'</td>
-                    <td> </td>
-                    <td> </td>
-                </tr>
-            ';
+            <div class="col-md">
+                <p class="invoice-info-row">
+                    <span>Circulante</span>
+                    <span>N/A</span>
+                </p>
+                <p class="invoice-info-row">
+                    <span>Fijo</span>
+                    <span>N/A</span>
+                </p>
+                <p class="invoice-info-row">
+                    <span>Diferido</span>
+                    <span>N/A</span>
+                </p>
+                <p class="invoice-info-row">
+                    <span class="tx-bold">Total</span>
+                    <span class="tx-bold">N/A</span>
+                </p>
+            </div>';
         }
-
-        // Finalmente las etiquetas de cierre
-        $tabla .='
-            </tbody>
-        </table>';
         
         // Retorna la tabla
         // return $tabla;
@@ -630,14 +648,10 @@ class ApoyoSolicitadoController extends Controller
     // Agrega los registros de Destino de las inversiones
     public function addInversion(Request $request)
     {
-        if($request->tipo_activo == 'A')
-            $request->tipo_activo = NULL;
-
         // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
-            'fuente_fin' => 'required',
-            'monto' => 'required',
-            'tipo_activo' => 'required'
+            'diferido' => 'required',
+            'circulante' => 'required'
         );
 
         // Se validan
@@ -650,13 +664,16 @@ class ApoyoSolicitadoController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
+        $id_empresa = \Auth::user()->id_empresa;
+
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_destino_inversion(?,?,?,?)', array(
-            $request->fuente_fin,
-            $request->monto,
-            $request->tipo_activo,
-            \Auth::user()->id_usuario
-        ));
+        $datos = Destino_apoyo::updateOrInsert(
+            ['id_empresa' => $id_empresa],
+            [
+                'diferido' => $request->diferido,
+                'circulante' => $request->circulante
+            ]
+        );
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -665,7 +682,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Destino de las inversiones
     public function deleteInversion($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_destino_inversion(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_destino_inversion(?)', array($id));
+        $delete = Destino_apoyo::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -688,7 +707,7 @@ class ApoyoSolicitadoController extends Controller
     public function getDesgloseInversiones(){
         // Hace la consulta y lo guarda en una variable
         // $inversionesDes = \DB::select('CALL VIII_pro_select_desgloces_inversiones_id(?)', array(\Auth::user()->id_usuario));
-        $inversionesDes = Desglose_apoyo_destino::where('id_empresa', \Auth::user()->id_empresa);
+        $inversionesDes = Desglose_apoyo_destino::where('id_empresa', \Auth::user()->id_empresa)->get();
 
         // La estructura del datatable se guarda en una variable
         // Primero las cabeceras
@@ -710,10 +729,10 @@ class ApoyoSolicitadoController extends Controller
             $tabla .= '
                 <tr class="tx-center">
                     <td>'.$row->concepto.'</td>
-                    <td>$ '.$row->inversion.'</td>
-                    <td>'.$row->vida_util.' '.($row->vida_util > 1 ? 'años' : 'año').'</td>
-                    <td>'.(1 / $row->depreciacion).' %</td>
-                    <td>$ '.$row->depreciacion.'</td>
+                    <td>$ '.number_format($row->inversion,2).'</td>
+                    <td>'.number_format($row->vida_util).' '.($row->vida_util > 1 ? 'años' : 'año').'</td>
+                    <td>'.number_format((1 / $row->vida_util),2).' %</td>
+                    <td>$ '.number_format($row->depreciacion,2).'</td>
                     <td><button onclick="borrarInversionesDesglose('.$row->id.')" class="btn-oblong btn-danger delete-ProSer"><i class="icon ion-trash-a"></i></button></td>
                 </tr>
             ';
@@ -735,8 +754,6 @@ class ApoyoSolicitadoController extends Controller
     // Agrega los registros de Destino de las inversiones
     public function addDesgloseInversion(Request $request)
     {
-        if($request->tipo_activo == 'A')
-            $request->tipo_activo = NULL;
 
         // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
@@ -755,13 +772,19 @@ class ApoyoSolicitadoController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
+        $depreciacion = (1 / $request->vida_util);
+        $depreciacion = $depreciacion * $request->inversion;
+
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_desgloce_inversiones(?,?,?,?)', array(
-            $request->desgloce_inv,
-            $request->inversion,
-            $request->vida_util,
-            \Auth::user()->id_usuario
-        ));
+        $datos = new Desglose_apoyo_destino;
+        $datos->concepto = $request->desgloce_inv;
+        $datos->inversion = $request->inversion;
+        $datos->vida_util = $request->vida_util;
+        $datos->depreciacion = $depreciacion;
+        $datos->id_empresa = \Auth::user()->id_empresa;
+        $datos->save();
+
+        $this->actualizarInversionFija();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -770,7 +793,10 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Destino de las inversiones
     public function deleteDesgloseInversion($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_desgloce_inversiones(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_desgloce_inversiones(?)', array($id));
+        $delete = Desglose_apoyo_destino::find($id);
+        $delete->delete();
+        $this->actualizarInversionFija();
 
         $mensaje = 'El registro fue eliminado';
         
@@ -785,6 +811,17 @@ class ApoyoSolicitadoController extends Controller
 
     }
 
+    private function actualizarInversionFija(){
+        $id_empresa = \Auth::user()->id_empresa;
+        $fijos = Desglose_apoyo_destino::where('id_empresa',$id_empresa)->sum('inversion');
+        $datos = Destino_apoyo::updateOrInsert(
+            ['id_empresa' => $id_empresa],
+            [
+                'fijo' => $fijos
+            ]
+        );
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////// CAPACIDAD DE ACTIVOS Y UTILIZADA /////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -792,31 +829,28 @@ class ApoyoSolicitadoController extends Controller
     // Regresa una variable con la tabla de Capacidada de activos y utilizada
     public function getCapacidadAU(){
         // Hace la consulta y lo guarda en una variable
-        $capacidada = \DB::select('CALL VIII_pro_select_capacidad_activos_id(?)', array(\Auth::user()->id_usuario));
+        // $capacidada = \DB::select('CALL VIII_pro_select_capacidad_activos_id(?)', array(\Auth::user()->id_usuario));
+        $capacidad = Capacidad_nueva::where('id_empresa', \Auth::user()->id_empresa)->first();
 
         $tabla = '';
         $boton = '<a href="#modalAddCapacidad" class="modal-effect btn btn-oblong btn-success" data-toggle="modal" data-effect="effect-slide-in-bottom">Agregar</a>';
 
 
         // Revisa si la variable tiene contenido
-        if($capacidada){
+        if($capacidad){
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
                     <span>Incremento de capacidad de activos</span>
-                    <span>'.$capacidada[0]->increment_cap_capacidad_activos.'  </span>
+                    <span>'.number_format(($capacidad->porc_incremento_cap_nueva_activos*100),2).' %</span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Capacidad máxima de unidades</span>
-                    <span>'.$capacidada[0]->capacidad_max_unidades_capacidad_activos.'  </span>
+                    <span>'.number_format($capacidad->capacidad_maxima,2).'  </span>
                 </p>
                 <p class="invoice-info-row">
                     <span>Capacidad utilizada nueva</span>
-                    <span>'.$capacidada[0]->capacidad_utilizada_capacidad_activos.'  </span>
-                </p>
-                <p class="invoice-info-row">
-                    <span>Valor residual</span>
-                    <span>'.$capacidada[0]->valor_residual_capacidad_activos.' %</span>
+                    <span>'.number_format(($capacidad->porc_capacidad_utilizada_nueva*100),2).' %</span>
                 </p>
             </div>';
 
@@ -827,7 +861,7 @@ class ApoyoSolicitadoController extends Controller
             <div class="col-md">
             <p class="invoice-info-row">
                 <span>Incremento de capacidad de activos</span>
-                <span>N/A%</span>
+                <span>N/A</span>
             </p>
             <p class="invoice-info-row">
                 <span>Capacidad máxima de unidades</span>
@@ -835,10 +869,6 @@ class ApoyoSolicitadoController extends Controller
             </p>
             <p class="invoice-info-row">
                 <span>Capacidad utilizada nueva</span>
-                <span>N/A</span>
-            </p>
-            <p class="invoice-info-row">
-                <span>Valor residual</span>
                 <span>N/A</span>
             </p>
             </div>';
@@ -855,8 +885,7 @@ class ApoyoSolicitadoController extends Controller
 
         // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
         $rules = array(
-            'incremento_cap' => 'required',
-            'valor_residual' => 'required'
+            'incremento_cap' => 'required'
         );
 
         // Se validan
@@ -869,12 +898,24 @@ class ApoyoSolicitadoController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
+        $capacidad = Capacidad_instalada::where('id_empresa', \Auth::user()->id_empresa)->first();
+        $proSer = Mezcla_productos_servicio::where('id_empresa', \Auth::user()->id_empresa)->sum('unidades_mes');
+        
+        $incremento = $request->incremento_cap / 100;
+        $proSer = $proSer * 12;
+        $capMax = $capacidad->maximo_unidades_anio * (1+$incremento);
+        $id_empresa = \Auth::user()->id_empresa;
+
         // Si no hubo errores se ejecuta el procedimiento almacenado
-        \DB::select('CALL VIII_pro_insert_capacidad_activos(?,?,?)', array(
-            $request->incremento_cap,
-            $request->valor_residual,
-            \Auth::user()->id_usuario
-        ));
+        $datos = Capacidad_nueva::updateOrInsert(
+            ['id_empresa'=>$id_empresa],
+
+            ['capacidad_maxima'=>$capMax,
+            'porc_incremento_cap_nueva_activos'=>$incremento,
+            'porc_capacidad_utilizada_nueva'=>($proSer / $capMax),
+            'id_empresa'=>$id_empresa]
+        
+        );
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
@@ -883,7 +924,9 @@ class ApoyoSolicitadoController extends Controller
     // Función que elimina un registro de Capacidada de activos y utilizada
     public function deleteCapacidadAU($id, Request $request)
     {
-        $delete = \DB::select('CALL VIII_pro_delete_capacidad_activos(?)', array($id));
+        // $delete = \DB::select('CALL VIII_pro_delete_capacidad_activos(?)', array($id));
+        $delete = Capacidad_nueva::find($id);
+        $delete->delete();
 
         $mensaje = 'El registro fue eliminado';
         

@@ -99,7 +99,7 @@
                                     @csrf
                                     <div class="form-group">
                                         <label class="tx-bold">Ingrese el porcentaje del costo de venta:</label>
-                                        <input type="number" id="porcentaje_inver" name="porcentaje_inver" class="form-control pd-y-12" min="0" max="100" step="1" placeholder="Ingrese aquí el porcentaje del costo de venta del 0 al 100" required>
+                                        <input type="number" id="porcentaje_inver" name="porcentaje_inver" class="form-control pd-y-12" min="0" max="100" step="0.01" placeholder="Ingrese aquí el porcentaje del costo de venta del 0 al 100" required>
                                     </div><!-- form-group -->
 
                                     <div class="form-group">
@@ -114,7 +114,7 @@
 
                                     <div class="form-group">
                                         <label class="tx-bold">Ingrese porcentaje de impuestos:</label>
-                                        <input type="number" id="porcentaje_imp" name="porcentaje_imp" class="form-control pd-y-12" min="0" max="100" step="1" placeholder="Ingrese aquí el porcentaje de impuestos de 1 al 100" required>
+                                        <input type="number" id="porcentaje_imp" name="porcentaje_imp" class="form-control pd-y-12" min="0" max="100" step="0.01" placeholder="Ingrese aquí el porcentaje de impuestos de 1 al 100" required>
                                     </div><!-- form-group -->
 
                                     <div class="modal-footer">

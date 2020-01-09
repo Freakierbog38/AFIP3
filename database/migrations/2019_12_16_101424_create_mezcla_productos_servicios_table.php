@@ -17,8 +17,8 @@ class CreateMezclaProductosServiciosTable extends Migration
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->integer('unidades_mes');
-            $table->float('precio',11,2);
-            $table->float('ventas_mes',11,2);
+            $table->float('precio',11,3);
+            $table->float('ventas_mes',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

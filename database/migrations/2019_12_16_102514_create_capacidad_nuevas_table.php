@@ -16,8 +16,8 @@ class CreateCapacidadNuevasTable extends Migration
         Schema::create('capacidad_nuevas', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('capacidad_maxima');
-            $table->float('porc_incremento_cap_nueva_activos', 11,2);
-            $table->float('porc_capacidad_utilizada_nueva', 11,2);
+            $table->float('porc_incremento_cap_nueva_activos', 11,3);
+            $table->float('porc_capacidad_utilizada_nueva', 11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

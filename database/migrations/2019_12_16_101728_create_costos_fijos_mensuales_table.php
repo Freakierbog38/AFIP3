@@ -16,7 +16,7 @@ class CreateCostosFijosMensualesTable extends Migration
         Schema::create('costos_fijos_mensuales', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('concepto');
-            $table->float('monto_mensual',11,2);
+            $table->float('monto_mensual',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

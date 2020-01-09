@@ -53,14 +53,14 @@ class ResultadosHistoricoController extends Controller
     // Regresa una variable con la fecha de Estado de Resultado Historico
     public function getFecha(){
         // Hace la consulta y lo guarda en una variable
-        $fecha = Fecha_resultado_historico::where('id_empresa','=',\Auth::user()->id_empresa)->get();
+        $fecha = Fecha_resultado_historico::where('id_empresa','=',\Auth::user()->id_empresa)->first();
 
         // Se inicia la variable para guardar el contenido html por mostrar
         $tabla = '';
         
         // Revisa si la variable tiene contenido
         if($fecha){
-            $tabla .= $fecha[0]->fecha.' ('.$fecha[0]->numero_meses.' meses)';
+            $tabla .= $fecha->fecha.' ('.$fecha->numero_meses.' meses)';
         }
         else{
             $tabla .= 'No hay fecha asignada';
@@ -94,9 +94,9 @@ class ResultadosHistoricoController extends Controller
 
         $id_empresa = \Auth::user()->id_empresa;
         // se optiene los datos de la fecha 
-        $fecha = Fecha_resultado_historico::where('id_empresa','=',\Auth::user()->id_empresa)->get();
+        $fecha = Fecha_resultado_historico::where('id_empresa','=',\Auth::user()->id_empresa)->first();
         // se separa el dato de numero de meses para poder motiplicarlo por la suma total de ventas mensuales
-        $num_meses = $fecha[0]->numero_meses;
+        $num_meses = $fecha->numero_meses;
         //se suma los costos fijos mensuales
         $sum_costos_fijos= Costos_fijos_mensuale::where('id_empresa', '=', \Auth::user()->id_empresa)->sum('monto_mensual');
     

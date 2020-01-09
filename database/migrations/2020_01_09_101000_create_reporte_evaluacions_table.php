@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFinanciamientoProyectosTable extends Migration
+class CreateReporteEvaluacionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateFinanciamientoProyectosTable extends Migration
      */
     public function up()
     {
-        Schema::create('financiamiento_proyectos', function (Blueprint $table) {
+        Schema::create('reporte_evaluacions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('fuente');
-            $table->float('monto',11,3);
-            $table->integer('id_empresa')->unsigned();
-            $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
+            $table->float('valor_presente_neto');
+            $table->float('relacion_beneficio-costo');
+            $table->float('tasa_interna_retorno');
+            $table->float('payback');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateFinanciamientoProyectosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('financiamiento_proyectos');
+        Schema::dropIfExists('reporte_evaluacions');
     }
 }

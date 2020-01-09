@@ -17,7 +17,7 @@ class CreateCapacidadInstaladasTable extends Migration
             $table->bigIncrements('id');
             $table->integer('maximo_unidades_mes');
             $table->integer('maximo_unidades_anio');
-            $table->float('porc_capacidad_utilizada_actual',11,2);
+            $table->float('porc_capacidad_utilizada_actual',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

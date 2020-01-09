@@ -16,9 +16,9 @@ class CreateEstacionalidadVentasTable extends Migration
         Schema::create('estacionalidad_ventas', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('mes');
-            $table->float('ventas',11,2);
-            $table->float('promedio',11,2);
-            $table->float('indice',11,2);
+            $table->float('ventas',11,3);
+            $table->float('promedio',11,3);
+            $table->float('indice',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

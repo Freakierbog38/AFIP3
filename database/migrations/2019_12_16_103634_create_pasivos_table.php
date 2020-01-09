@@ -15,8 +15,8 @@ class CreatePasivosTable extends Migration
     {
         Schema::create('pasivos', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->float('corto_plazo');
-            $table->float('largo_plazo');
+            $table->float('corto_plazo',11,3);
+            $table->float('largo_plazo',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

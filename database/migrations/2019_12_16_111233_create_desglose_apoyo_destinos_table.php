@@ -16,9 +16,9 @@ class CreateDesgloseApoyoDestinosTable extends Migration
         Schema::create('desglose_apoyo_destinos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('concepto');
-            $table->float('inversion',11,2);
+            $table->float('inversion',11,3);
             $table->integer('vida_util');
-            $table->float('depreciacion',11,2);
+            $table->float('depreciacion',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

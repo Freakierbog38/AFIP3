@@ -304,12 +304,12 @@
                                     <div class="form-group">
                                         <label class="tx-bold">Descripción del Capital:</label>
                                         <input type="text" id="descripcion_cap" name="descripcion_cap" class="form-control pd-y-12"  placeholder="Ingrese la descripción del capital aquí" required>
-                                    </div><!-- form-group -->
+                                    </div>
 
                                     <div class="form-group">
                                         <label class="tx-bold">Monto:</label>
                                         <input type="number" id="monto" name="monto" class="form-control pd-y-12" step="0.01" placeholder="Ingrese aqui el Monto aquí" required>
-                                    </div><!-- form-group -->
+                                    </div>
 
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary">Guardar</button>
@@ -433,10 +433,10 @@
                                 <form id="form-add-Inversiones">
                                     @csrf
 
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label class="tx-bold">Destino de Inversión:</label>
                                         <input type="text" id="fuente_fin" name="fuente_fin" class="form-control pd-y-12"  placeholder="Ingrese el destino de inversión aquí" required>
-                                    </div><!-- form-group -->
+                                    </div>
 
                                     <div class="form-group">
                                         <label class="tx-bold">Tipo:</label>
@@ -445,11 +445,21 @@
                                             <option value="Diferido">Activo Diferido</option>
                                             <option value="Circulante">Activo Circulante</option>
                                         </select>
-                                    </div><!-- form-group -->
+                                    </div>
 
                                     <div class="form-group">
                                         <label class="tx-bold">Monto:</label>
                                         <input type="number" id="monto" name="monto" class="form-control pd-y-12" step="0.01" placeholder="Ingrese aqui el Monto aquí" required>
+                                    </div> -->
+
+                                    <div class="form-group">
+                                        <label class="tx-bold">Diferido:</label>
+                                        <input type="number" id="diferido" name="diferido" class="form-control pd-y-12" step="0.01" placeholder="Ingrese aqui el Monto aquí" required>
+                                    </div><!-- form-group -->
+
+                                    <div class="form-group">
+                                        <label class="tx-bold">Circulante:</label>
+                                        <input type="number" id="circulante" name="circulante" class="form-control pd-y-12" step="0.01" placeholder="Ingrese aqui el Monto aquí" required>
                                     </div><!-- form-group -->
 
                                     <div class="modal-footer">
@@ -540,10 +550,10 @@
                                         <input type="number" id="incremento_cap" name="incremento_cap" class="form-control pd-y-12" step="1" min="0" placeholder="Ejemplo: 10" required>
                                     </div><!-- form-group -->
 
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label class="tx-bold">Ingrese el valor residual de los activos:</label>
                                         <input type="number" id="valor_residual" name="valor_residual" class="form-control pd-y-12" step="0.01" min="" placeholder="Ejemplo: 0" required>
-                                    </div><!-- form-group -->
+                                    </div> -->
 
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary">Guardar</button>

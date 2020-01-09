@@ -15,12 +15,12 @@ class CreateMacroeconomicosFinancierosTable extends Migration
     {
         Schema::create('macroeconomicos_financieros', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->float('inflacion',11,2);
-            $table->float('tipo_cambio',11,2);
-            $table->float('TIEE',11,2);
-            $table->float('CETES',11,2);
-            $table->float('ISR',11,2);
-            $table->float('TREMA',11,2);
+            $table->float('inflacion',11,3);
+            $table->float('tipo_cambio',11,3);
+            $table->float('TIEE',11,3);
+            $table->float('CETES',11,3);
+            $table->float('ISR',11,3);
+            $table->float('TREMA',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

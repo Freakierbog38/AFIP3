@@ -17,10 +17,10 @@ class CreateReporteAmortizacionsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('anio');
             $table->integer('mes');
-            $table->float('saldo',11,2);
-            $table->float('pago_capital',11,2);
-            $table->float('pago_intereses',11,2);
-            $table->float('pago_total',11,2);
+            $table->float('saldo',11,3);
+            $table->float('pago_capital',11,3);
+            $table->float('pago_intereses',11,3);
+            $table->float('pago_total',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

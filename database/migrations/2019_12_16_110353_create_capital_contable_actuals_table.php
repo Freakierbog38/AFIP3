@@ -15,8 +15,8 @@ class CreateCapitalContableActualsTable extends Migration
     {
         Schema::create('capital_contable_actuals', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('descripcion');
-            $table->float('monto',11,2);
+            $table->string('descripcion');
+            $table->float('monto',11,3);
             $table->integer('adiciona_proyecto');
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');

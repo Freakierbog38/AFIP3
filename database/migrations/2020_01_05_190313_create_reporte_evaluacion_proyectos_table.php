@@ -15,11 +15,12 @@ class CreateReporteEvaluacionProyectosTable extends Migration
     {
         Schema::create('reporte_evaluacion_proyectos', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->float('flujo_positivo');
-            $table->float('flujo_negativo');
-            $table->float('flujos_incrementales');
-            $table->float('mercancia_comercializadas');
-            $table->float('capacidad_utilizada');
+            $table->integer('anio');
+            $table->float('flujo_positivo',11,3);
+            $table->float('flujo_negativo',11,3);
+            $table->float('flujos_incrementales',11,3);
+            $table->float('mercancia_comercializadas',11,3);
+            $table->float('capacidad_utilizada',11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

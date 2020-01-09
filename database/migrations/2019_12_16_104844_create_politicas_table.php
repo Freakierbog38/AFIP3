@@ -19,8 +19,8 @@ class CreatePoliticasTable extends Migration
             $table->integer('dias_inventarios');
             $table->integer('dias_proveedores');
             $table->integer('ciclo_financieros');
-            $table->float('dividendos',11,2);
-            $table->float('utilidades_retenidas',11,2);
+            $table->float('dividendos',11,3);
+            $table->float('utilidades_retenidas',11,3);
             $table->integer('dias_efectivo');
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');

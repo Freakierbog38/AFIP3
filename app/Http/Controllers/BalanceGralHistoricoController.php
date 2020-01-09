@@ -8,6 +8,7 @@ use App\Activos;
 use App\Desglose_activo;
 use App\Pasivo;
 use App\Capital_contable;
+
 class BalanceGralHistoricoController extends Controller
 {
     // Muestra la vista principal de módulo
@@ -58,14 +59,14 @@ class BalanceGralHistoricoController extends Controller
         
 
         // Hace la consulta y lo guarda en una variable
-        $fecha = Fecha_balance_general::where('id_empresa','=',\Auth::user()->id_empresa)->get();
+        $fecha = Fecha_balance_general::where('id_empresa','=',\Auth::user()->id_empresa)->first();
 
         // Se inicia la variable para guardar el contenido html por mostrar
         $tabla = '';
         
         // Revisa si la variable tiene contenido
         if($fecha){
-            $tabla .= $fecha[0]->fecha.' ('.$fecha[0]->numero_meses.' meses)';
+            $tabla .= $fecha->fecha.' ('.$fecha->numero_meses.' meses)';
            
         }
         else{
@@ -97,13 +98,21 @@ class BalanceGralHistoricoController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
+        $id_empresa = \Auth::user()->id_empresa;
+
+        $fijo = Desglose_activo::where('id_empresa', $id_empresa)->sum('total');
+
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        $datos = new Activos;
-        $datos->circulante=$request->activo_cir;
-        $datos->fijo=0;
-        $datos->diferido=$request->activo_dif;
-        $datos->id_empresa=\Auth::user()->id_empresa;
-        $datos->save();
+        $datos = Activos::updateOrInsert(
+            ['id_empresa' => $id_empresa],
+            [
+                'fijo' => $fijo,
+                'circulante' => $request->activo_cir,
+                'diferido' => $request->activo_dif
+            ]
+        );
+
+        $this->actualizarCapitalContable();
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!']);
@@ -112,8 +121,7 @@ class BalanceGralHistoricoController extends Controller
     // Regresa una variable con la tabla de Activos
     public function getActivos(){
         // Hace la consulta y lo guarda en una variable
-        //$acti = Activos::where('id_empresa','=',\Auth::user()->id_empresa)->get();
-        $acti= Activos::where('id_empresa','=',\Auth::user()->id_empresa)->get();
+        $acti= Activos::where('id_empresa', \Auth::user()->id_empresa)->get();
 
         // Se inicia la variable para guardar el contenido html por mostrar
         $tabla = '';
@@ -123,7 +131,7 @@ class BalanceGralHistoricoController extends Controller
         $datosReturn=array('total_activos'=>0);
         // Revisa si la variable tiene contenido
         foreach($acti as $activos){
-            $total=$activos->circulante+$activos->fijo+$activos->diferido; 
+            $total = $activos->circulante + $activos->fijo + $activos->diferido;
             $tabla .= '
             <div class="col-md">
                 <p class="invoice-info-row">
@@ -199,7 +207,7 @@ class BalanceGralHistoricoController extends Controller
         }
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        $id_empresa=\Auth::user()->id_usuario;
+        $id_empresa=\Auth::user()->id_empresa;
         
         $datos = new Desglose_activo;
         $total = $request->valor_un*$request->monto_activo;
@@ -212,6 +220,9 @@ class BalanceGralHistoricoController extends Controller
         $datos->anios_restantes = $request->anios_restantes;
         $datos->id_empresa = $id_empresa;
         $datos->save();
+
+        $this->editSumTotalActivoFijo();
+        $this->actualizarCapitalContable();
         
 
         // Y regresa mensaje de éxito
@@ -222,7 +233,7 @@ class BalanceGralHistoricoController extends Controller
     public function getUnDesgloseActivo($id)
     {
         // Se realiza la solicitud
-        $activoD = Desglose_activo::where('id','=',$id)->get();
+        $activoD = Desglose_activo::where('id','=',$id)->first();
         // Y regresa el registro
         return \Response::json( array(
             'AD' => $activoD,
@@ -249,15 +260,19 @@ class BalanceGralHistoricoController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
-        \DB::select('CALL V_pro_edit_activo_fijo(?,?,?,?,?,?,?)', array(
-            $request->id,
-            $request->activo_fijo,
-            $request->monto_activo,
-            $request->valor_un,
-            $request->depreciacion,
-            $request->anios_restantes,
-            \Auth::user()->id_usuario
-        ));
+        $datos = Desglose_activo::where('id', $id)->first();
+        $total = $request->valor_un*$request->monto_activo;
+
+        $datos->concepto = $request->activo_fijo;
+        $datos->cantidad = $request->valor_un;
+        $datos->valor_historico = $request->monto_activo;
+        $datos->total = $total;
+        $datos->depreciacion = $request->depreciacion;
+        $datos->anios_restantes = $request->anios_restantes;
+        $datos->save();
+
+        $this->editSumTotalActivoFijo();
+        $this->actualizarCapitalContable();
 
         return response()->json(['success' => '¡El registro ha sido modificado con éxito!']);
 
@@ -308,8 +323,8 @@ class BalanceGralHistoricoController extends Controller
                 </tr>';
             $total['cantidad'] += $row->cantidad;
             $total['totalMes'] += $row->total;
-            $total['depreciacion']+=$row->depreciacion;
-            $total['valor_historico']+=$row->valor_historico;
+            $total['depreciacion'] += $row->depreciacion;
+            $total['valor_historico'] += $row->valor_historico;
             $ite++;
         }
 
@@ -317,7 +332,7 @@ class BalanceGralHistoricoController extends Controller
             $tabla .= '
                     <tr class="tx-bold">
                         <td>Total</td>
-                        <td>$ '.number_format( $total['valor_historico']/*($total['totalMes'] / $total['cantidad'])*/, 2 ).'</td>
+                        <td>$ '.number_format( $total['valor_historico'], 2 ).'</td>
                         <td> '.number_format($total['cantidad'],2).'</td>
                         <td>$ '.number_format( $total['totalMes'],2).'</td>
                         <td>$ '.number_format( $total['depreciacion'],2).'</td>
@@ -332,24 +347,16 @@ class BalanceGralHistoricoController extends Controller
             </tbody>
         </table>';
 
-      //sumaVentasMes = Desglose_activo::where('id_empresa','=',$id_empresa)->sum('total');
-       //el 'find' solo funciona con las llaves primarias de las tablas
-       /*$edit = Activos::where('id_empresa', '=',\Auth::user()->id_empresa);
-       $edit->fijo=$total['totalMes'];
-       $edit->save();*/ 
-
-       $sumaVentasMes=$this->editSumTotalActivoFijo($total['totalMes']);
         // Retorna en formato json
-        return  $var = array('tabla'=>$tabla, 'total'=>$sumaVentasMes);
+        return  array('tabla'=>$tabla);
         
     }
 
-    public function editSumTotalActivoFijo($total){
+    public function editSumTotalActivoFijo(){
         $id_empresa=\Auth::user()->id_empresa;
-
+        $total = Desglose_activo::where('id_empresa', $id_empresa)->sum('total');
         $datos= Activos::updateOrInsert(
             ['id_empresa'=>$id_empresa],
-
             ['fijo'=>$total]
         
         );
@@ -361,6 +368,8 @@ class BalanceGralHistoricoController extends Controller
     {
         $delete= Desglose_activo::find($id);
         $delete->delete();
+        $this->editSumTotalActivoFijo();
+        $this->actualizarCapitalContable();
         $mensaje = 'El registro fue eliminado';
         
         if($request->ajax()){
@@ -468,6 +477,8 @@ class BalanceGralHistoricoController extends Controller
             'largo_plazo'=>$request->pasivo_lar]
         
         );
+
+        $this->actualizarCapitalContable();
        
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!']);
@@ -559,9 +570,9 @@ class BalanceGralHistoricoController extends Controller
         }
 
         // // Si no hubo errores se ejecuta el procedimiento almacenado
-        $id_empresa=\Auth::user()->id_empresa;
+        $id_empresa = \Auth::user()->id_empresa;
 
-        $total_exceso_insuficiencia=$request->total_activo-$request->total_pasivo-$request->capital_apor-$request->capital_gan;
+        $total_exceso_insuficiencia = $request->total_activo - $request->total_pasivo - $request->capital_apor - $request->capital_gan;
         
         $datos = Capital_contable::updateOrInsert(
             ['id_empresa'=>$id_empresa],
@@ -575,6 +586,41 @@ class BalanceGralHistoricoController extends Controller
 
         // Y regresa mensaje de éxito
         return response()->json(['success' => '¡Agregado con éxito!','datos'=>$request]);
+    }
+
+    private function actualizarCapitalContable(){
+        $id_empresa = \Auth::user()->id_empresa;
+
+        $pasivo = Pasivo::where('id_empresa', $id_empresa)->first();
+        if($pasivo){
+            $pasivo = $pasivo->capital_aportado + $pasivo->capital_ganado + $pasivo->exceso_insuficiencia;
+        }
+        else{
+            $pasivo = 0;
+        }
+
+        $activo = Activos::where('id_empresa', $id_empresa)->first();
+        if($activo){
+            $activo = $activo->circulante + $activo->fijo + $activo->diferido;
+        }
+        else{
+            $activo = 0;
+        }
+
+        $capital = Capital_contable::where('id_empresa', $id_empresa)->first();
+
+        if($capital){
+            $total_exceso_insuficiencia = $activo - $pasivo - $capital->capital_aportado - $capital->capital_ganado;
+        }
+        else{
+            $total_exceso_insuficiencia = $activo - $pasivo;
+        }
+
+        $datos = Capital_contable::updateOrInsert(
+            ['id_empresa'=>$id_empresa],
+            ['exceso_insuficiencia'=>$total_exceso_insuficiencia]
+        
+        );
     }
 
 }

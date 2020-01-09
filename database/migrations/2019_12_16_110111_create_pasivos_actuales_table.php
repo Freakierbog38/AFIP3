@@ -17,9 +17,9 @@ class CreatePasivosActualesTable extends Migration
             $table->bigIncrements('id');
             $table->string('clave');
             $table->string('tipo');
-            $table->float('monto',11,2);
+            $table->float('monto',11,3);
             $table->string('tipo_tasa');
-            $table->float('interes',11,2);
+            $table->float('interes',11,3);
             $table->integer('plazo');
             $table->integer('gracia');
             $table->integer('pagos');

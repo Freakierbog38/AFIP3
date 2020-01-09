@@ -15,9 +15,9 @@ class CreateCapitalContablesTable extends Migration
     {
         Schema::create('capital_contables', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->float('capital_aportado');
-            $table->float('capital_ganado');
-            $table->float('exceso_insuficiencia');
+            $table->float('capital_aportado',11,3)->default(0);
+            $table->float('capital_ganado',11,3)->default(0);
+            $table->float('exceso_insuficiencia',11,3)->default(0);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
