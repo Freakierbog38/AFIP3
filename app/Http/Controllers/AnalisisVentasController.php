@@ -99,7 +99,7 @@ class AnalisisVentasController extends Controller
             return response()->json(['errors' => $error->errors()->all()]);
         }
         $prodSer = new Mezcla_productos_servicio;
-        $prodSer->nombre=$request->ProductoServicio;
+        $prodSer->nombre = $request->ProductoServicio;
         $prodSer->unidades_mes=$request->UnidadesMes;
         $prodSer->precio=$request->PrecioUnitario;
         $prodSer->ventas_mes=$request->mult;

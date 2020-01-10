@@ -2299,6 +2299,7 @@
         },
         {
             "name": "symfony/mime",
+<<<<<<< HEAD
             "version": "v5.0.2",
             "source": {
                 "type": "git",
@@ -2309,6 +2310,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/mime/zipball/0e6a4ced216e49d457eddcefb61132173a876d79",
                 "reference": "0e6a4ced216e49d457eddcefb61132173a876d79",
+=======
+            "version": "v4.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/mime.git",
+                "reference": "010cc488e56cafe5f7494dea70aea93100c234df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/mime/zipball/010cc488e56cafe5f7494dea70aea93100c234df",
+                "reference": "010cc488e56cafe5f7494dea70aea93100c234df",
+>>>>>>> 7b65b1af6fa838f6d22486922be2725daae71b12
                 "shasum": ""
             },
             "require": {
@@ -2321,12 +2334,20 @@
             },
             "require-dev": {
                 "egulias/email-validator": "^2.1.10",
+<<<<<<< HEAD
                 "symfony/dependency-injection": "^4.4|^5.0"
+=======
+                "symfony/dependency-injection": "^3.4|^4.1|^5.0"
+>>>>>>> 7b65b1af6fa838f6d22486922be2725daae71b12
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
+<<<<<<< HEAD
                     "dev-master": "5.0-dev"
+=======
+                    "dev-master": "4.4-dev"
+>>>>>>> 7b65b1af6fa838f6d22486922be2725daae71b12
                 }
             },
             "autoload": {
@@ -2357,7 +2378,11 @@
                 "mime",
                 "mime-type"
             ],
+<<<<<<< HEAD
             "time": "2019-11-30T14:12:50+00:00"
+=======
+            "time": "2019-11-30T08:27:26+00:00"
+>>>>>>> 7b65b1af6fa838f6d22486922be2725daae71b12
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -3258,9 +3283,9 @@
             "authors": [
                 {
                     "name": "Marcel Pociot",
-                    "role": "Developer",
                     "email": "marcel@beyondco.de",
-                    "homepage": "https://beyondco.de"
+                    "homepage": "https://beyondco.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Symfony Var-Dump Server for Laravel",
@@ -3701,18 +3726,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "role": "Developer",
-                    "email": "arne@blankerts.de"
+                    "email": "arne@blankerts.de",
+                    "role": "Developer"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "role": "Developer",
-                    "email": "sebastian@phpeople.de"
+                    "email": "sebastian@phpeople.de",
+                    "role": "Developer"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "Developer",
-                    "email": "sebastian@phpunit.de"
+                    "email": "sebastian@phpunit.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -4914,8 +4939,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "role": "Developer",
-                    "email": "arne@blankerts.de"
+                    "email": "arne@blankerts.de",
+                    "role": "Developer"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",

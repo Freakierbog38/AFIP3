@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Empresa;
 use App\Reporte_estado_resultados;
 use App\Mezcla_productos_servicio;
 use App\Ingresos_costos;
@@ -317,12 +318,12 @@ class ResultadosController extends Controller
             $pagoInt = 0;
             $pagoTotal = 0;
             $anio = 1;
-            echo("Año &nbsp;");
-            echo("Mes &nbsp;");
-            echo("Saldo &nbsp;");
-            echo("Pago Capital &nbsp;");
-            echo("Pago Capital &nbsp;");
-            echo("Pago Total &nbsp;");
+            // echo("Año &nbsp;");
+            // echo("Mes &nbsp;");
+            // echo("Saldo &nbsp;");
+            // echo("Pago Capital &nbsp;");
+            // echo("Pago Capital &nbsp;");
+            // echo("Pago Total &nbsp;");
             // Se realizarán las iteraciones para cada mes
             for($mes=1;$mes<=$pasivo->plazo;$mes++){
 
@@ -351,9 +352,11 @@ class ResultadosController extends Controller
                     [
                         'id_empresa' => \Auth::user()->id_empresa,
                         'anio'              => $anio,
-                        'mes'               => $mes
+                        'mes'               => $mes,
+                        'clave'             => $pasivo->clave,
                     ],
                     [
+                        'destino'           => $pasivo->tipo,
                         'saldo'             => $saldo,
                         'pago_capital'      => $pagoCapital,
                         'pago_intereses'    => $pagoInt,
@@ -361,14 +364,14 @@ class ResultadosController extends Controller
                     ]
                 );
 
-                echo("<br>");
-                echo("$anio &nbsp;");
-                echo("$mes &nbsp;");
-                echo("$saldo &nbsp;");
-                echo("$pagoCapital &nbsp;");
-                echo("$pagoInt &nbsp;");
-                echo("$pagoTotal &nbsp;");
-                echo("<br>");
+                // echo("<br>");
+                // echo("$anio &nbsp;");
+                // echo("$mes &nbsp;");
+                // echo("$saldo &nbsp;");
+                // echo("$pagoCapital &nbsp;");
+                // echo("$pagoInt &nbsp;");
+                // echo("$pagoTotal &nbsp;");
+                // echo("<br>");
 
                 // Si el mes en curso es un multiplo de 12 se pasa al siguiente año
                 if($mes%12 == 0){
@@ -393,8 +396,8 @@ class ResultadosController extends Controller
 
     // Función encargada de llenar la tabla de estado de resultados orientada al reporte
     public function EstadoResultados($anioss){
-        echo("<br>");
-        echo("----------------- Estado de resultados -----------------");
+        // echo("<br>");
+        // echo("----------------- Estado de resultados -----------------");
         // El estado de resultados se calcula por año, por lo tanto se realizaran calculos para cada uno de estos por eso es el ciclo for
         // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=1;$anio<=$anioss;$anio++){
@@ -434,35 +437,35 @@ class ResultadosController extends Controller
                 ]
             );
 
-            echo("<br>");
-            echo("----------------- Año ".$anio." -----------------");
-            echo("<br>");
-            echo("Ventas Brutas = " . $ventasBrutas);
-            echo("<br>");
-            echo("Costo Ventas = " .$costoVentas);
-            echo("<br>");
-            echo("Utilidad Bruta = " .$utilidadBruta);
-            echo("<br>");
-            echo("Gastos de Administración y Ventas = " .$gastosAdmonVentas);
-            echo("<br>");
-            echo("UAFIRDA = " .$uafirda);
-            echo("<br>");
-            echo("Depreciación y Amortización = " .$depreciacionAmortizacion);
-            echo("<br>");
-            echo("Utilidad de Operación = " .$utilidadOperacion);
-            echo("<br>");
-            echo("Gastos Financieros = " .$gastosFinancieros);
-            echo("<br>");
-            echo("Utilidad Antes de Impuestos = " .$utilidadAntesImpuestos);
-            echo("<br>");
-            echo("ISR + PTU = " .$isrptu);
-            echo("<br>");
-            echo("Utilidad Neta = " .$utilidadNeta);
-            echo("<br>");
-            echo("Dividendos = " .$dividendos);
-            echo("<br>");
-            echo("Utilidades Retenidas = " .$utilidadesRetenidas);
-            echo("<br>");
+            // echo("<br>");
+            // echo("----------------- Año ".$anio." -----------------");
+            // echo("<br>");
+            // echo("Ventas Brutas = " . $ventasBrutas);
+            // echo("<br>");
+            // echo("Costo Ventas = " .$costoVentas);
+            // echo("<br>");
+            // echo("Utilidad Bruta = " .$utilidadBruta);
+            // echo("<br>");
+            // echo("Gastos de Administración y Ventas = " .$gastosAdmonVentas);
+            // echo("<br>");
+            // echo("UAFIRDA = " .$uafirda);
+            // echo("<br>");
+            // echo("Depreciación y Amortización = " .$depreciacionAmortizacion);
+            // echo("<br>");
+            // echo("Utilidad de Operación = " .$utilidadOperacion);
+            // echo("<br>");
+            // echo("Gastos Financieros = " .$gastosFinancieros);
+            // echo("<br>");
+            // echo("Utilidad Antes de Impuestos = " .$utilidadAntesImpuestos);
+            // echo("<br>");
+            // echo("ISR + PTU = " .$isrptu);
+            // echo("<br>");
+            // echo("Utilidad Neta = " .$utilidadNeta);
+            // echo("<br>");
+            // echo("Dividendos = " .$dividendos);
+            // echo("<br>");
+            // echo("Utilidades Retenidas = " .$utilidadesRetenidas);
+            // echo("<br>");
         }
 
     }
@@ -643,8 +646,8 @@ class ResultadosController extends Controller
 
     // Función encargada a hacer los calculos para el balance general del reporte
     public function balanceGral($anioss){
-        echo("<br>");
-        echo("----------------- Balance General -----------------");
+        // echo("<br>");
+        // echo("----------------- Balance General -----------------");
         // Al igual que el Estado de Resultados se realizaran calculos por año, por eso se utiliza un for
         // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=1;$anio<=$anioss;$anio++){
@@ -698,49 +701,49 @@ class ResultadosController extends Controller
                 ]
             );
 
-            echo("<br>");
-            echo("----------------- Año ".$anio." -----------------");
-            echo("<br>");
-            echo("ACTIVO");
-            echo("<br>");
-            echo("Efectivo = ".$activoEfectivo);
-            echo("<br>");
-            echo("Cuentas por cobrar = ".$cuentasCobrar);
-            echo("<br>");
-            echo("Inventario = ".$inventario);
-            echo("<br>");
-            echo("Otros Activos = ".$otrosActivos);
-            echo("<br>");
-            echo("Total Activo Circulante = ".$totalActivoCirculante);
-            echo("<br>");
-            echo("Activo Fijo Neto = ".$activoFijoNeto);
-            echo("<br>");
-            echo("Total Activo Diferido = ".$totalActivoDiferido);
-            echo("<br>");
-            echo("Total Activo = ".$totalActivo);
-            echo("<br>");
-            echo("PASIVOS");
-            echo("<br>");
-            echo("Proveedores = ".$proveedores);
-            echo("<br>");
-            echo("Otros Pasivos Circulantes = ".$otrosPasivosCir);
-            echo("<br>");
-            echo("Documentos a Pagar = ".$doctosPagar);
-            echo("<br>");
-            echo("Total Pasivo Circulante = ".$totalPasivoCirculante);
-            echo("<br>");
-            echo("Bancos Largo Plazo = ".$bancosLargoPlazo);
-            echo("<br>");
-            echo("Total Pasivo Largo Plazo = ".$totalPasivoLargoPlazo);
-            echo("<br>");
-            echo("Total Pasivo = ".$totalPasivo);
-            echo("<br>");
-            echo("CAPITAL");
-            echo("<br>");
-            echo("Total Capital = ".$totalCapital);
-            echo("<br>");
-            echo("Pasivo + Capital = ".$pasivoCapital);
-            echo("<br>");
+            // echo("<br>");
+            // echo("----------------- Año ".$anio." -----------------");
+            // echo("<br>");
+            // echo("ACTIVO");
+            // echo("<br>");
+            // echo("Efectivo = ".$activoEfectivo);
+            // echo("<br>");
+            // echo("Cuentas por cobrar = ".$cuentasCobrar);
+            // echo("<br>");
+            // echo("Inventario = ".$inventario);
+            // echo("<br>");
+            // echo("Otros Activos = ".$otrosActivos);
+            // echo("<br>");
+            // echo("Total Activo Circulante = ".$totalActivoCirculante);
+            // echo("<br>");
+            // echo("Activo Fijo Neto = ".$activoFijoNeto);
+            // echo("<br>");
+            // echo("Total Activo Diferido = ".$totalActivoDiferido);
+            // echo("<br>");
+            // echo("Total Activo = ".$totalActivo);
+            // echo("<br>");
+            // echo("PASIVOS");
+            // echo("<br>");
+            // echo("Proveedores = ".$proveedores);
+            // echo("<br>");
+            // echo("Otros Pasivos Circulantes = ".$otrosPasivosCir);
+            // echo("<br>");
+            // echo("Documentos a Pagar = ".$doctosPagar);
+            // echo("<br>");
+            // echo("Total Pasivo Circulante = ".$totalPasivoCirculante);
+            // echo("<br>");
+            // echo("Bancos Largo Plazo = ".$bancosLargoPlazo);
+            // echo("<br>");
+            // echo("Total Pasivo Largo Plazo = ".$totalPasivoLargoPlazo);
+            // echo("<br>");
+            // echo("Total Pasivo = ".$totalPasivo);
+            // echo("<br>");
+            // echo("CAPITAL");
+            // echo("<br>");
+            // echo("Total Capital = ".$totalCapital);
+            // echo("<br>");
+            // echo("Pasivo + Capital = ".$pasivoCapital);
+            // echo("<br>");
         }
     }
 
@@ -841,8 +844,8 @@ class ResultadosController extends Controller
 
     // Función encargada de llenar las tablas de flujo de efectivo del reporte 
     public function flujo_efectivo($anioss){
-        echo("<br>");
-        echo("----------------- Flujo Efectivo -----------------");
+        // echo("<br>");
+        // echo("----------------- Flujo Efectivo -----------------");
         // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=1;$anio<=$anioss;$anio++){
             $ingresosVentas = $this->ventasBrutas($anio);
@@ -887,39 +890,39 @@ class ResultadosController extends Controller
                 ]
             );
 
-            echo("<br>");
-            echo("----------------- Año ".$anio." -----------------");
-            echo("<br>");
-            echo("ENTRADAS EFECTIVO");
-            echo("<br>");
-            echo("Ingresos Ventas = ".$ingresosVentas);
-            echo("<br>");
-            echo("Apoyo = ".$apoyo);
-            echo("<br>");
-            echo("Aportaciones = ".$aportaciones);
-            echo("<br>");
-            echo("Total Fuentes = ".$total_fuentes);
-            echo("<br>");
-            echo("SALIDAS EFECTIVO");
-            echo("<br>");
-            echo("Costo de Ventas = ".$costoVentas);
-            echo("<br>");
-            echo("Gastos de Operación = ".$gtosOperacion);
-            echo("<br>");
-            echo("Incremento de Capital de Trabajo = ".$incCapitalTrabajo);
-            echo("<br>");
-            echo("Pagos de Capital = ".$pagosCapital);
-            echo("<br>");
-            echo("Pagos de Intereses = ".$pagosInteres);
-            echo("<br>");
-            echo("Inversión = ".$inversion);
-            echo("<br>");
-            echo("Impuestos = ".$impuestos);
-            echo("<br>");
-            echo("Total Aplicaciones = ".$total_aplicaciones);
-            echo("<br>");
-            echo("Flujo Efectivo Neto = ".$flujoEfectivoNeto);
-            echo("<br>");
+            // echo("<br>");
+            // echo("----------------- Año ".$anio." -----------------");
+            // echo("<br>");
+            // echo("ENTRADAS EFECTIVO");
+            // echo("<br>");
+            // echo("Ingresos Ventas = ".$ingresosVentas);
+            // echo("<br>");
+            // echo("Apoyo = ".$apoyo);
+            // echo("<br>");
+            // echo("Aportaciones = ".$aportaciones);
+            // echo("<br>");
+            // echo("Total Fuentes = ".$total_fuentes);
+            // echo("<br>");
+            // echo("SALIDAS EFECTIVO");
+            // echo("<br>");
+            // echo("Costo de Ventas = ".$costoVentas);
+            // echo("<br>");
+            // echo("Gastos de Operación = ".$gtosOperacion);
+            // echo("<br>");
+            // echo("Incremento de Capital de Trabajo = ".$incCapitalTrabajo);
+            // echo("<br>");
+            // echo("Pagos de Capital = ".$pagosCapital);
+            // echo("<br>");
+            // echo("Pagos de Intereses = ".$pagosInteres);
+            // echo("<br>");
+            // echo("Inversión = ".$inversion);
+            // echo("<br>");
+            // echo("Impuestos = ".$impuestos);
+            // echo("<br>");
+            // echo("Total Aplicaciones = ".$total_aplicaciones);
+            // echo("<br>");
+            // echo("Flujo Efectivo Neto = ".$flujoEfectivoNeto);
+            // echo("<br>");
         }
     }
 
@@ -1071,8 +1074,8 @@ class ResultadosController extends Controller
     }
 
     public function evaluacion_proyecto($anioss){
-        echo("<br>");
-        echo("----------------- Evaluación de Proyecto -----------------");
+        // echo("<br>");
+        // echo("----------------- Evaluación de Proyecto -----------------");
         // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=0;$anio<=$anioss;$anio++){
             $flujoPositivo = $this->flujo_positivo($anio);
@@ -1096,36 +1099,37 @@ class ResultadosController extends Controller
                 ]
             );
 
-            echo("<br>");
-            echo("----------------- Año ".$anio." -----------------");
-            echo("<br>");
-            echo("Flujo Positivo = ".$flujoPositivo);
-            echo("<br>");
-            echo("Flujo Negativo = ".$flujoNegativo);
-            echo("<br>");
-            echo("Flujos Incrementales = ".$flujosIncrementales);
-            echo("<br>");
-            echo("Mercancia Comercializada = ".$mercanciaComerc);
-            echo("<br>");
-            echo("Capacidad Utilizada = ".$capacidad_usada);
-            echo("<br>");
+            // echo("<br>");
+            // echo("----------------- Año ".$anio." -----------------");
+            // echo("<br>");
+            // echo("Flujo Positivo = ".$flujoPositivo);
+            // echo("<br>");
+            // echo("Flujo Negativo = ".$flujoNegativo);
+            // echo("<br>");
+            // echo("Flujos Incrementales = ".$flujosIncrementales);
+            // echo("<br>");
+            // echo("Mercancia Comercializada = ".$mercanciaComerc);
+            // echo("<br>");
+            // echo("Capacidad Utilizada = ".$capacidad_usada);
+            // echo("<br>");
         }
-        echo("<br>");
-        echo("----------------- Evaluación de Proyecto 2 -----------------");
+        // echo("<br>");
+        // echo("----------------- Evaluación de Proyecto 2 -----------------");
 
         $vpn = $this->Valor_presente_neto($anioss);
         $rbc = $this->beneficio_costo();
         $irr = $this->tasa_interna_retorno();
         $payback = $this->payback();
         
-        echo("<br>");
-        echo("Valor Presente Neto = ".$vpn);
-        echo("<br>");
+        // echo("<br>");
+        // echo("Valor Presente Neto = ".$vpn);
+        // echo("<br>");
     }
 
     public function index(){
+        $id_empresa = \Auth::user()->id_empresa;
         $anioss = Ingresos_costos::where([
-            ['id_empresa', \Auth::user()->id_empresa],
+            ['id_empresa', $id_empresa],
             ['apoyo', 1]
         ])->count();
         $this->tablasAmortizacion();
@@ -1133,7 +1137,36 @@ class ResultadosController extends Controller
         $this->balanceGral($anioss);
         $this->flujo_efectivo($anioss);
         $this->evaluacion_proyecto($anioss);
-        // return view('modulos.Resultados', ['title' => 'Reporte AFIP']);
+
+        $empresa = Empresa::where('id', $id_empresa)->first();
+        $prodSer = Mezcla_productos_servicio::where('id_empresa', $id_empresa)->get();
+        $amortizacion = Reporte_amortizacion::where('id_empresa', $id_empresa)->get();
+        $tablasAmortizacion = Reporte_amortizacion::where('id_empresa', $id_empresa)->groupBy('clave', 'destino')->select('clave', 'destino')->get();
+        $balanceGral = Reporte_balance_general::where('id_empresa', $id_empresa)->get();
+        $estadoResultados = Reporte_estado_resultados::where('id_empresa', $id_empresa)->get();
+        $flujoEfectivo = Reporte_flujo_efectivo::where('id_empresa', $id_empresa)->get();
+        // $evaluacion = Reporte_evaluacion::where('id_empresa', $id_empresa)->get();
+        $evaluacionProyecto = Reporte_evaluacion_proyecto::where('id_empresa', $id_empresa)->get();
+        // $prodSer = json_decode($prodSer);
+
+        $totalProdSer = array(
+            'unidades' => Mezcla_productos_servicio::where('id_empresa', $id_empresa)->sum('unidades_mes'),
+            'ventas' => Mezcla_productos_servicio::where('id_empresa', $id_empresa)->sum('ventas_mes')
+        );
+
+        return view('modulos.Resultados', [
+            'title'                 => 'Reporte AFIP',
+            'empresa'               => $empresa,
+            'prodSer'               => $prodSer,
+            'prodSerTotal'          => $totalProdSer,
+            'amortizacion'          => $amortizacion,
+            'tablasAmortizacion'    => $tablasAmortizacion,
+            'balanceGral'           => $balanceGral,
+            'estadoResultados'      => $estadoResultados,
+            'flujoEfectivo'         => $flujoEfectivo,
+            // 'evaluacion'            => $evaluacion,
+            'evaluacionProyecto'    => $evaluacionProyecto
+        ]);
     }
 
 }

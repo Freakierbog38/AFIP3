@@ -20,6 +20,7 @@ class CreateReporteFlujoEfectivosTable extends Migration
             $table->float('apoyo', 11,3);
             $table->float('aportaciones', 11,3);
             $table->float('total_fuentes', 11,3);
+
             $table->float('costo_ventas', 11,3);
             $table->float('gastos_operacion', 11,3);
             $table->float('inc_capital_trabajo', 11,3);
@@ -28,6 +29,7 @@ class CreateReporteFlujoEfectivosTable extends Migration
             $table->float('inversion', 11,3);
             $table->float('impuestos', 11,3);
             $table->float('total_aplicaciones', 11,3);
+            
             $table->float('flujo_efectivo_neto', 11,3);
             $table->integer('id_empresa')->unsigned();
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');

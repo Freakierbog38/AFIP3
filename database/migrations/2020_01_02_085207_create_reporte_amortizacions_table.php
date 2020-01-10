@@ -17,6 +17,10 @@ class CreateReporteAmortizacionsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('anio');
             $table->integer('mes');
+
+            $table->string('clave');
+            $table->string('destino');
+
             $table->float('saldo',11,3);
             $table->float('pago_capital',11,3);
             $table->float('pago_intereses',11,3);
