@@ -484,13 +484,38 @@
             <tr>
                 <td>Capacidad Utilizada con Apoyo</td>
                 @for($i=0;$i<$evaluacionProyecto->count();$i++)
-                    <td class="tx-center">$ {{number_format($evaluacionProyecto[$i]->capacidad_utilizada,2)}}</td>
+                    <td class="tx-center">{{number_format(($evaluacionProyecto[$i]->capacidad_utilizada*100),2)}} %</td>
                 @endfor
             </tr>
         </tbody>
     </table>
     
     <div id="EvaluacionProyecto" class="ht-200 ht-sm-300"></div>
+
+    <div class="tx-center">
+        @if(isset($empresa))
+        <label class="section-title">Evaluación: {{$empresa->nombre}}</label>
+        @endif
+
+        @if(isset($evaluacion))
+        <p> 
+            <span class="tx-bold">Valor Presente Neto:</span> 
+            <span class="tx-right">$ {{ number_format($evaluacion->valor_presente_neto,2) }}</span> 
+        </p>
+        <p> 
+            <span class="tx-bold">Relación Beneficio-Costo:</span> 
+            <span class="tx-right">{{ number_format($evaluacion->relacion_beneficio_costo,2) }}</span> 
+        </p>
+        <p> 
+            <span class="tx-bold">Tasa Interna de Retorno:</span> 
+            <span class="tx-right">{{ number_format($evaluacion->tasa_interna_retorno,2) }} %</span> 
+        </p>
+        <p> 
+            <span class="tx-bold">Payback(años):</span> 
+            <span class="tx-right">{{ number_format($evaluacion->payback,2) }}</span> 
+        </p>
+        @endif
+    </div>
     
 </div><!-- wrapper -->
 
@@ -523,7 +548,7 @@ $(function(){
             x: 'right',
             data: [
                 @foreach($prodSer as $dato)
-                    '{{quotemeta($dato->nombre)}}',
+                    '{{$dato->nombre}}',
                 @endforeach
             ]
         },
@@ -673,9 +698,9 @@ $(function(){
             name: 'Años',
             splitLine: {show: false},
             data: [
-                @foreach($evaluacionProyecto as $dato)
-                    'Año {{$dato->anio}}',
-                @endforeach
+                @for($i=1; $i<$evaluacionProyecto->count(); $i++)
+                    'Año {{$evaluacionProyecto[$i]->anio}}',
+                @endfor
             ]
         },
         yAxis: {
@@ -694,9 +719,9 @@ $(function(){
                 type: 'line',
                 color: ['#00FF00'],
                 data: [
-                    @foreach($evaluacionProyecto as $dato)
-                        {{$dato->flujo_positivo}},
-                    @endforeach
+                    @for($i=1; $i<$evaluacionProyecto->count(); $i++)
+                        {{$evaluacionProyecto[$i]->flujo_positivo}},
+                    @endfor
                 ],
             },
             {
@@ -704,9 +729,9 @@ $(function(){
                 type: 'line',
                 color: ['#FF0000'],
                 data: [
-                    @foreach($evaluacionProyecto as $dato)
-                        {{$dato->flujo_negativo}},
-                    @endforeach
+                    @for($i=1; $i<$evaluacionProyecto->count(); $i++)
+                        {{$evaluacionProyecto[$i]->flujo_negativo}},
+                    @endfor
                 ],
             },
         ]

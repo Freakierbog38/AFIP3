@@ -191,8 +191,8 @@
                     <div class="col-lg-12 bg-white">
                         <div class="pd-xl-x-30">
                             <div class="pd-x-30 pd-y-10">
-                                <span id="form-result-addIngresosCostosCA"></span>
-                                <form id="form-add-IngresosCostosCA">
+                                <span id="form-result-addIngresosCostosCA-uno"></span>
+                                <form id="form-add-IngresosCostosCA-uno">
                                     @csrf
 
                                     <div class="row">
@@ -674,9 +674,75 @@
                         // Recarga las tablas
                         llenarIngresosCostosCA();
                         // Esconde el modal
-                        $('#modalAddIngresosCostosCA1').modal('hide');
+                        $('#modalAddIngresosCostosCA').modal('hide');
                         // Y vacia el formulario
                         $('#form-add-IngresosCostosCA')[0].reset();
+
+                        // Muestra un modal de que la operación ha sido exitosa
+                        bootbox.alert({
+                            message: data.success,
+                            buttons: {
+                                ok: {
+                                    className: 'btn btn-success'
+                                }
+                            },
+                        });
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    bootbox.dialog({
+                        title: '¡Error!',
+                        message: '<p> Ocurrió un error :( </p>',
+                        size: 'small',
+                        backdrop: false,
+                        buttons: {
+                            weno: {
+                                className: 'btn btn-danger'
+                            }
+                        },
+                    });
+                }
+            });
+
+        });
+
+        // Función que agrega Ingresos y Costos con Apoyo
+        $('#form-add-IngresosCostosCA-uno').submit(function(e) {
+            // Previene el recargo de página
+            e.preventDefault();
+
+            // Petición POST mediante Ajax
+            $.ajax({
+                url: "{{url('supuestosProyecciones/addIngresosCostosCAUno')}}",
+                method: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                dataType: "json",
+                success: function(data){
+                    var html = '';
+                    if(data.errors){
+                        // Si devuelve errores los muestra en el div previamente creado con un margen rojo
+                        html = '<div class="alert alert-danger">';
+                        for(var count = 0; count < data.errors.lenght; count++){
+                            html += '<p>' + data.errors[count] + '</p>';
+                        }
+                        html += '</div>';
+                        $('#form-result-addIngresosCostosCA-uno').html(html);
+                    }
+
+                    if(data.success){
+                        // Recarga las tablas
+                        llenarIngresosCostosCA();
+                        // Esconde el modal
+                        $('#modalAddIngresosCostosCA1').modal('hide');
+                        // Y vacia el formulario
+                        $('#form-add-IngresosCostosCA-uno')[0].reset();
 
                         // Muestra un modal de que la operación ha sido exitosa
                         bootbox.alert({

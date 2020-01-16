@@ -236,6 +236,9 @@ Route::group(['middleware' => 'auth', 'prefix'=> 'supuestosProyecciones'], funct
     // Agrega registro en Costos Con Apoyo
     Route::post('/addIngresosCostosCA', 'SupuestosProyeccionesController@addIngresosCostosCA');
 
+    // Agrega registro en Costos Con Apoyo
+    Route::post('/addIngresosCostosCAUno', 'SupuestosProyeccionesController@addIngresosCostosCAUno');
+
     // Elimina registros en Costos Con Apoyo
     Route::delete('/deleteIngresosCostosCA/{id}', 'SupuestosProyeccionesController@deleteIngresosCostosCA');
 

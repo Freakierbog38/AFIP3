@@ -112,6 +112,59 @@ class SupuestosProyeccionesController extends Controller
         return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
     }
 
+    // Agrega los registros de Ingresos y Costos con Apoyo
+    public function addIngresosCostosCAUno(Request $request)
+    {
+        // Sirve para validar que los campos estén llenados, o verificar alguna otra validación
+        $rules = array(
+            'Incremento_Pre' => 'required',
+            'Incremento_Uni' => 'required',
+            'Incremento_Cos_Fij' => 'required',
+            'Incremento_Cos_Var' => 'required'
+        );
+
+        // Se validan
+        $error = \Validator::make($request->all(), $rules);
+
+        // Si hay errores
+        if($error->fails())
+        {
+            // Regresa el array de los errores en formato Json
+            return response()->json(['errors' => $error->errors()->all()]);
+        }
+
+        // Coonvertir a porcentaje los valores
+
+        $id_empresa = \Auth::user()->id_empresa;
+
+        $registros_num = Ingresos_costos::where('id_empresa', $id_empresa)->count();
+        $acumulado = Ingresos_costos::where('id_empresa', $id_empresa)->max('inc_ventas_acumuladas');
+
+        $Incremento_Pre = $request->Incremento_Pre / 100;
+        $Incremento_Uni = $request->Incremento_Uni / 100;
+        $Incremento_Cos_Fij = $request->Incremento_Cos_Fij / 100;
+        $Incremento_Cos_Var = $request->Incremento_Cos_Var / 100;
+
+        // Si no hubo errores se ejecuta el procedimiento almacenado
+        $datos = new Ingresos_costos;
+        $datos->anio = $registros_num + 1;
+        $datos->incremento_precios = $Incremento_Pre;
+        $datos->incremento_unidades_vendidas = $Incremento_Uni;
+            $incVentas = (1+$Incremento_Pre) * (1+$Incremento_Uni)-1;
+        $datos->incremento_ventas = $incVentas;
+            $acumulado = $acumulado * (1+$incVentas);
+        $datos->inc_ventas_acumuladas = $acumulado;
+        $datos->inc_costos_fijos = $Incremento_Cos_Fij;
+        $datos->inc_costos_variables = $Incremento_Cos_Var;
+        $datos->apoyo = 1;
+        $datos->id_empresa = $id_empresa;
+        $datos->save();
+        
+
+        // Y regresa mensaje de éxito
+        return response()->json(['success' => '¡Agregado con éxito!', 'datos' => $request]);
+    }
+
     // Regresa una tabla creada con HTML de Ingresos y Costos Con Apoyo
     public function getIngresosCostosCA(){
         // Hace la consulta y lo guarda en una variable

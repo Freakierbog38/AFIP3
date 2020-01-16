@@ -25,6 +25,7 @@ use App\Reporte_balance_general;
 use App\Destino_apoyo;
 use App\Reporte_evaluacion_proyecto;
 use App\Reporte_evaluacion;
+use App\Reporte_costo_beneficio;
 
 class ResultadosController extends Controller
 {
@@ -399,7 +400,6 @@ class ResultadosController extends Controller
         // echo("<br>");
         // echo("----------------- Estado de resultados -----------------");
         // El estado de resultados se calcula por año, por lo tanto se realizaran calculos para cada uno de estos por eso es el ciclo for
-        // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=1;$anio<=$anioss;$anio++){
             $ventasBrutas = $this->comercializacionUnidades($anio) * $this->precioUnitario($anio);
             $costoVentas = $this->comercializacionUnidades($anio) * $this->costoVentasVariableU($anio);
@@ -649,7 +649,6 @@ class ResultadosController extends Controller
         // echo("<br>");
         // echo("----------------- Balance General -----------------");
         // Al igual que el Estado de Resultados se realizaran calculos por año, por eso se utiliza un for
-        // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=1;$anio<=$anioss;$anio++){
             ////////// ACTIVO ////////////
             $activoEfectivo = $this->activo_efectivo($anio);
@@ -846,7 +845,6 @@ class ResultadosController extends Controller
     public function flujo_efectivo($anioss){
         // echo("<br>");
         // echo("----------------- Flujo Efectivo -----------------");
-        // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=1;$anio<=$anioss;$anio++){
             $ingresosVentas = $this->ventasBrutas($anio);
             $apoyo = $this->apoyos($anio);
@@ -1041,6 +1039,79 @@ class ResultadosController extends Controller
         return $resultado;
     }
 
+    private function TDoFA($anio){
+        $trema = macroeconomicos_financieros::where('id_empresa', \Auth::user()->id_empresa)->first();
+        $trema = $trema->TREMA;
+        $resultado = pow( (1+$trema), $anio);
+        return $resultado;
+    }
+
+    private function ctosGtosTotales($anio){
+        $fe = Reporte_flujo_efectivo::where([
+            ['id_empresa', \Auth::user()->id_empresa],
+            ['anio', $anio]
+        ])->first();
+        $resultado = $fe->total_aplicaciones - $fe->inversion - $fe->inc_capital_trabajo;
+
+        return $resultado;
+    }
+
+    private function relacion_costo_beneficio($anios){
+        for($i=1;$i<=$anios;$i++){
+            $tdfa = $this->TDoFA($i);
+            $ingresos_totales = $this->comercializacionUnidades($i) * $this->precioUnitario($i);
+            $ingresos_actualizados = $ingresos_totales * $tdfa;
+            $costosGastosTotales = $this->ctosGtosTotales($i);
+            $costos_actualizados = $tdfa * $costosGastosTotales;
+            
+            Reporte_costo_beneficio::updateOrInsert(
+                [
+                    'id_empresa'                => \Auth::user()->id_empresa,
+                    'anio'                      => $i
+                ],
+                [
+                    'tdofa'                     => $tdfa,
+                    'ingresos_totales'          => $ingresos_totales,
+                    'ingresos_actualizados'     => $ingresos_actualizados,
+                    'ctos_gtos_totales'         => $costosGastosTotales,
+                    'ctos_gtos_actualizados'    => $costos_actualizados
+                ]
+            );
+        }
+    }
+
+    private function IRR($investment, $flow, $precision = 0.000001) {
+
+        if (array_sum($flow) < $investment):
+            return 0;
+        endif;
+        $maxIterations = 20;
+        $i =0;
+        if (is_array($flow)):
+            $min = 0;
+            $max = 1;
+            $net_present_value = 1;
+            while ((abs($net_present_value - $investment) > $precision)&& ($i < $maxIterations)) {
+                $net_present_value = 0;
+                $guess = ($min + $max) / 2;
+                foreach ($flow as $period => $cashflow) {
+                    $net_present_value += $cashflow / (1 + $guess) ** ($period + 1);
+                }
+                if ($net_present_value - $investment > 0) {
+                    $min = $guess;
+                } else {
+                    $max = $guess;
+                }
+                $i++;
+                // echo('<br>');
+                // echo($net_present_value);
+            }
+            return $guess * 100;
+        else:
+            return 0;
+        endif;
+    }
+
     private function Valor_presente_neto($anio){
         $trema = macroeconomicos_financieros::where('id_empresa', \Auth::user()->id_empresa)->first();
         $trema = $trema->TREMA;
@@ -1061,22 +1132,61 @@ class ResultadosController extends Controller
         return $npv + $valor->flujos_incrementales;
     }
 
-    private function beneficio_costo(){
-        //
+    private function beneficio_costo($anios){
+        $this->relacion_costo_beneficio($anios);
+        $costo_beneficio = Reporte_costo_beneficio::where('id_empresa', \Auth::user()->id_empresa)->get();
+        $beneficio = $costo_beneficio->sum('ingresos_actualizados');
+        $costo = $costo_beneficio->sum('ctos_gtos_actualizados');
+
+        $resultado = $beneficio / $costo;
+        
+        return $resultado;
     }
 
     private function tasa_interna_retorno(){
-        //
+        $flujo = Reporte_evaluacion_proyecto::where('id_empresa', \Auth::user()->id_empresa)->pluck('flujos_incrementales');
+        $flujo_e = array();
+        for($i=1;$i<$flujo->count();$i++){
+            array_push($flujo_e, $flujo[$i]);
+        }
+        // print_r($flujo_e);
+        // echo('<br>');
+        // print_r($flujo);
+
+        $tir = $this->IRR($flujo[0], $flujo_e);
+
+        // echo('<br>');
+        // print_r($tir);
+
+        return $tir;
     }
 
     private function payback(){
-        //
+        $suma = 0;
+        $anios = 0;
+        $exceso = 0;
+
+        $flujo = Reporte_evaluacion_proyecto::where('id_empresa', \Auth::user()->id_empresa)->pluck('flujos_incrementales');
+        
+        for ($i=1; $i < $flujo->count(); $i++) {
+            $suma += $flujo[$i];
+            if( ($suma-abs($flujo[0])) < 0 ){
+                $anios = $i;
+                $exceso = $suma - abs($flujo[0]);
+                break;
+            }
+        }
+
+        $payback = $anios + (abs($exceso)/abs($flujo[0]));
+
+        // print_r($payback);
+
+        return $payback;
     }
 
     public function evaluacion_proyecto($anioss){
         // echo("<br>");
         // echo("----------------- Evaluación de Proyecto -----------------");
-        // NOTA: EL 3 ES PROVICIONAL, DEBE CAMBIARSE POR EL NUMERO DE AÑOS INGRESADOS EN SUPUESTOS PROYECCIONES YA QUE AHI SE DELIMITA EL MAXIMO QUE SE PUEDEN CALCULAR
         for($anio=0;$anio<=$anioss;$anio++){
             $flujoPositivo = $this->flujo_positivo($anio);
             $flujoNegativo = $this->flujo_negativo($anio);
@@ -1117,9 +1227,21 @@ class ResultadosController extends Controller
         // echo("----------------- Evaluación de Proyecto 2 -----------------");
 
         $vpn = $this->Valor_presente_neto($anioss);
-        $rbc = $this->beneficio_costo();
+        $rbc = $this->beneficio_costo($anioss);
         $irr = $this->tasa_interna_retorno();
         $payback = $this->payback();
+
+        Reporte_evaluacion::updateOrInsert(
+            [
+                'id_empresa'                => \Auth::user()->id_empresa
+            ],
+            [
+                'valor_presente_neto'       => $vpn,
+                'relacion_beneficio_costo'  => $rbc,
+                'tasa_interna_retorno'      => $irr,
+                'payback'                   => $payback
+            ]
+        );
         
         // echo("<br>");
         // echo("Valor Presente Neto = ".$vpn);
@@ -1145,7 +1267,7 @@ class ResultadosController extends Controller
         $balanceGral = Reporte_balance_general::where('id_empresa', $id_empresa)->get();
         $estadoResultados = Reporte_estado_resultados::where('id_empresa', $id_empresa)->get();
         $flujoEfectivo = Reporte_flujo_efectivo::where('id_empresa', $id_empresa)->get();
-        // $evaluacion = Reporte_evaluacion::where('id_empresa', $id_empresa)->get();
+        $evaluacion = Reporte_evaluacion::where('id_empresa', $id_empresa)->first();
         $evaluacionProyecto = Reporte_evaluacion_proyecto::where('id_empresa', $id_empresa)->get();
         // $prodSer = json_decode($prodSer);
 
@@ -1153,6 +1275,8 @@ class ResultadosController extends Controller
             'unidades' => Mezcla_productos_servicio::where('id_empresa', $id_empresa)->sum('unidades_mes'),
             'ventas' => Mezcla_productos_servicio::where('id_empresa', $id_empresa)->sum('ventas_mes')
         );
+
+        
 
         return view('modulos.Resultados', [
             'title'                 => 'Reporte AFIP',
@@ -1164,7 +1288,7 @@ class ResultadosController extends Controller
             'balanceGral'           => $balanceGral,
             'estadoResultados'      => $estadoResultados,
             'flujoEfectivo'         => $flujoEfectivo,
-            // 'evaluacion'            => $evaluacion,
+            'evaluacion'            => $evaluacion,
             'evaluacionProyecto'    => $evaluacionProyecto
         ]);
     }
